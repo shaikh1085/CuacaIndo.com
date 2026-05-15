@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="id">
-<head><meta name="monetag" content="93ac63f4b4288fac61931aa704d1c102">
+<head>
+  <meta name="monetag" content="93ac63f4b4288fac61931aa704d1c102">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CuacaIndo – Informasi Cuaca Indonesia Terkini</title>
   <meta name="description" content="Cek cuaca terkini di seluruh kota Indonesia. Prakiraan cuaca akurat untuk Jakarta, Surabaya, Bali, Medan, Bandung dan kota lainnya."/>
   <meta name="keywords" content="cuaca indonesia, prakiraan cuaca, cuaca hari ini, cuaca jakarta, cuaca bali, cuaca surabaya"/>
-  <meta name="google-site-verification" content="lDkeLgJ6gZ99UYpsG2w_Vr89mM_IDTf9K4AciHzUC0E" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
@@ -18,12 +18,14 @@
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:'DM Sans',sans-serif; background:var(--sky); color:var(--white); min-height:100vh; overflow-x:hidden; }
+    
     .bg-orbs { position:fixed; inset:0; z-index:0; pointer-events:none; }
     .orb { position:absolute; border-radius:50%; filter:blur(80px); opacity:0.18; animation:drift 18s ease-in-out infinite alternate; }
     .orb1 { width:600px; height:600px; background:#00c9b1; top:-200px; left:-150px; }
     .orb2 { width:500px; height:500px; background:#1a5fa8; bottom:-150px; right:-100px; animation-delay:-6s; }
     .orb3 { width:300px; height:300px; background:#f5c842; top:40%; left:50%; animation-delay:-12s; }
     @keyframes drift { from{transform:translate(0,0) scale(1)} to{transform:translate(40px,30px) scale(1.1)} }
+
     .wrapper { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:0 20px; }
     header { padding:28px 0 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); }
     .logo { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:900; }
@@ -31,109 +33,194 @@
     .logo small { display:block; font-family:'DM Sans',sans-serif; font-size:0.6rem; letter-spacing:4px; color:var(--muted); text-transform:uppercase; margin-top:2px; }
     .header-time { text-align:right; font-size:0.78rem; color:var(--muted); }
     .header-time #clock { font-size:1.4rem; font-weight:500; color:var(--white); display:block; margin-bottom:2px; }
-    .ad-banner { background:rgba(255,255,255,0.03); border:1px dashed rgba(255,255,255,0.1); border-radius:10px; text-align:center; padding:14px; color:var(--muted); font-size:0.75rem; margin:20px 0; }
-    .search-section { padding:30px 0 10px; text-align:center; }
-    .search-section h1 { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,5vw,3rem); font-weight:700; line-height:1.1; margin-bottom:8px; }
+
+    .search-section { padding:40px 0 20px; text-align:center; }
+    .search-section h1 { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,5vw,3rem); font-weight:700; line-height:1.1; margin-bottom:15px; }
     .search-section h1 em { color:var(--teal); font-style:normal; }
-    .search-section p { color:var(--muted); font-size:0.9rem; margin-bottom:24px; }
-    .search-box { display:flex; gap:10px; max-width:520px; margin:0 auto; }
-    .search-box input { flex:1; padding:14px 20px; background:rgba(255,255,255,0.07); border:1px solid var(--card-border); border-radius:50px; color:var(--white); font-family:'DM Sans',sans-serif; font-size:0.95rem; outline:none; transition:border 0.3s; }
-    .search-box input::placeholder { color:var(--muted); }
-    .search-box input:focus { border-color:var(--teal); }
-    .search-box button { padding:14px 28px; background:linear-gradient(135deg,var(--teal),var(--teal2)); border:none; border-radius:50px; color:#0a1628; font-weight:700; font-family:'DM Sans',sans-serif; font-size:0.9rem; cursor:pointer; transition:transform 0.2s,box-shadow 0.2s; }
-    .search-box button:hover { transform:scale(1.04); box-shadow:0 6px 24px rgba(0,201,177,0.4); }
+    
+    .controls-container { max-width:600px; margin:0 auto; display:flex; flex-direction:column; gap:15px; }
+    
+    .dropdown-box select {
+      width: 100%; padding: 14px 20px; background: #ffffff; /* Background white */
+      border: 1px solid var(--card-border); border-radius: 12px; color: #000000; /* Text black */
+      font-family: 'DM Sans', sans-serif; cursor: pointer; outline: none; appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat; background-position: right 15px center; background-size: 15px;
+    }
+
+    .search-box { display:flex; gap:10px; }
+    .search-box input { 
+      flex:1; 
+      padding:14px 20px; 
+      background: #ffffff; /* Background white kar diya */
+      border:1px solid var(--card-border); 
+      border-radius:50px; 
+      color: #000000; /* Likhne wala text black kar diya */
+      outline:none; 
+      transition:border 0.3s; 
+    }
+    .search-box input::placeholder {
+      color: #666666; /* Placeholder ko thoda dark rakha taaki white pr dikhe */
+    }
+    .search-box input:focus { border-color:var(--teal); box-shadow: 0 0 10px rgba(0,201,177,0.2); }
+    
+    .search-box button { padding:14px 28px; background:linear-gradient(135deg,var(--teal),var(--teal2)); border:none; border-radius:50px; color:#0a1628; font-weight:700; cursor:pointer; transition:transform 0.2s; }
+    .search-box button:hover { transform:scale(1.04); }
+
     #main-weather { margin:30px 0; display:none; }
     .main-card { background:linear-gradient(135deg,rgba(0,201,177,0.12),rgba(26,95,168,0.15)); border:1px solid var(--card-border); border-radius:24px; padding:36px; display:flex; gap:30px; align-items:center; flex-wrap:wrap; animation:fadeUp 0.5s ease forwards; }
     @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-    .main-icon { font-size:5rem; line-height:1; }
+    .main-icon { font-size:5rem; }
     .main-city { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:700; }
-    .main-country { color:var(--teal); font-size:0.85rem; letter-spacing:2px; }
-    .main-temp { font-size:4.5rem; font-weight:300; line-height:1; margin:8px 0; background:linear-gradient(135deg,var(--white),var(--teal)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    .main-desc { color:var(--muted); font-size:1rem; }
-    .main-stats { display:flex; gap:20px; margin-top:16px; flex-wrap:wrap; }
-    .stat { background:rgba(255,255,255,0.05); border-radius:12px; padding:10px 16px; text-align:center; }
-    .stat-val { font-size:1.1rem; font-weight:500; color:var(--gold); }
-    .stat-label { font-size:0.72rem; color:var(--muted); margin-top:2px; }
-    .section-title { font-family:'Playfair Display',serif; font-size:1.4rem; margin:36px 0 18px; display:flex; align-items:center; gap:12px; }
-    .section-title::after { content:''; flex:1; height:1px; background:linear-gradient(to right,var(--card-border),transparent); }
+    .main-temp { font-size:4.5rem; font-weight:300; background:linear-gradient(135deg,var(--white),var(--teal)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .main-stats { display:flex; gap:15px; margin-top:16px; flex-wrap:wrap; }
+    .stat { background:rgba(255,255,255,0.05); border-radius:12px; padding:10px 16px; min-width:100px; text-align:center; }
+    .stat-val { color:var(--gold); font-weight:500; font-size:1.1rem; }
+    .stat-label { font-size:0.7rem; color:var(--muted); }
+
     .city-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; margin-bottom:36px; }
-    .city-card { background:var(--card); border:1px solid var(--card-border); border-radius:18px; padding:22px; cursor:pointer; transition:transform 0.25s,border-color 0.25s,box-shadow 0.25s; animation:fadeUp 0.5s ease forwards; }
-    .city-card:hover { transform:translateY(-4px); border-color:var(--teal); box-shadow:0 12px 32px rgba(0,201,177,0.15); }
-    .city-icon { font-size:2.2rem; margin-bottom:10px; }
-    .city-name { font-size:1rem; font-weight:500; margin-bottom:4px; }
-    .city-temp { font-size:1.7rem; font-weight:300; color:var(--teal2); }
-    .city-desc { font-size:0.75rem; color:var(--muted); margin-top:4px; }
-    .tips-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; margin-bottom:36px; }
-    .tip-card { background:rgba(245,200,66,0.06); border:1px solid rgba(245,200,66,0.15); border-radius:14px; padding:18px; }
-    .tip-card h3 { font-size:0.9rem; margin-bottom:6px; color:var(--gold); }
-    .tip-card p { font-size:0.8rem; color:var(--muted); line-height:1.6; }
-    .ad-mid { background:rgba(255,255,255,0.02); border:1px dashed rgba(255,255,255,0.08); border-radius:12px; padding:18px; text-align:center; color:var(--muted); font-size:0.75rem; margin:20px 0; }
-    footer { border-top:1px solid var(--card-border); padding:24px 0; text-align:center; color:var(--muted); font-size:0.8rem; }
-    footer strong { color:var(--teal); }
-    .error-msg { background:rgba(255,107,74,0.1); border:1px solid rgba(255,107,74,0.3); border-radius:12px; padding:16px; color:var(--coral); text-align:center; margin:10px 0; display:none; }
-    @media(max-width:600px) { .main-card{flex-direction:column;padding:24px} .main-temp{font-size:3.5rem} .search-box{flex-direction:column} }
+    .city-card { background:var(--card); border:1px solid var(--card-border); border-radius:18px; padding:22px; cursor:pointer; transition: 0.3s; }
+    .city-card:hover { transform:translateY(-5px); border-color:var(--teal); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+
+    #privacy-modal {
+      display: none; position: fixed; inset: 0; background: rgba(10, 22, 40, 0.9);
+      z-index: 100; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-content {
+      background: #162436; border: 1px solid var(--teal); padding: 35px;
+      border-radius: 24px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative;
+    }
+    .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.8rem; cursor: pointer; color: var(--teal); }
+    .modal-content h2 { margin-bottom: 20px; color: var(--teal); font-family: 'Playfair Display', serif; }
+    .modal-content p { font-size: 0.95rem; line-height: 1.6; color: var(--white); margin-bottom: 15px; opacity: 0.8; }
+
+    footer { border-top:1px solid var(--card-border); padding:40px 0; text-align:center; color:var(--muted); font-size:0.85rem; }
+    footer a { color: var(--teal); text-decoration: none; margin: 0 10px; border-bottom: 1px solid transparent; transition: 0.3s; }
+    footer a:hover { border-bottom-color: var(--teal); }
+    
+    @media(max-width:600px) { .main-card{flex-direction:column; text-align:center;} .search-box{flex-direction:column} }
   </style>
 </head>
 <body>
+
 <div class="bg-orbs">
   <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
 </div>
+
 <div class="wrapper">
   <header>
     <div class="logo">Cuaca<span>Indo</span><small>Informasi Cuaca Indonesia</small></div>
-    <div class="header-time"><span id="clock"></span><span id="date-display"></span></div>
+    <div class="header-time">
+      <div style="color: var(--teal); font-size: 0.65rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">Waktu Indonesia (WIB)</div>
+      <span id="clock">00:00:00</span>
+      <span id="date-display">...</span>
+    </div>
   </header>
-  <div class="ad-banner">📢 IKLAN — Pasang Google AdSense Anda Di Sini</div>
+
   <div class="search-section">
     <h1>Cuaca <em>Terkini</em><br>Seluruh Indonesia</h1>
-    <p>Masukkan nama kota untuk melihat prakiraan cuaca</p>
-    <div class="search-box">
-      <input type="text" id="search-input" placeholder="Cari kota... (contoh: Yogyakarta)"/>
-      <button onclick="searchCity()">🔍 Cari</button>
+    
+    <div class="controls-container">
+      <div class="dropdown-box">
+        <select id="city-dropdown" onchange="handleDropdown(this.value)">
+          <option value="">-- Pilih Kota Populer --</option>
+          <!-- Cities injected via JS -->
+        </select>
+      </div>
+
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="Masukkan nama kota..."/>
+        <button onclick="searchCity()">🔍 Cari</button>
+      </div>
     </div>
-    <div class="error-msg" id="error-msg">Kota tidak ditemukan. Coba nama kota lain.</div>
+    <div id="error-msg" style="color:var(--coral); margin-top:15px; display:none; background: rgba(255,107,74,0.1); padding: 10px; border-radius: 8px;">Kota tidak ditemukan. Harap periksa nama kota.</div>
   </div>
+
   <div id="main-weather">
     <div class="main-card" id="main-card">
       <div class="main-icon" id="m-icon">⛅</div>
       <div class="main-info">
         <div class="main-city" id="m-city">—</div>
-        <div class="main-country" id="m-country">Indonesia 🇮🇩</div>
+        <div class="main-country">Indonesia 🇮🇩</div>
         <div class="main-temp" id="m-temp">—°C</div>
         <div class="main-desc" id="m-desc">—</div>
         <div class="main-stats">
           <div class="stat"><div class="stat-val" id="m-humidity">—</div><div class="stat-label">💧 Kelembaban</div></div>
           <div class="stat"><div class="stat-val" id="m-wind">—</div><div class="stat-label">💨 Angin</div></div>
           <div class="stat"><div class="stat-val" id="m-feels">—</div><div class="stat-label">🌡️ Terasa</div></div>
-          <div class="stat"><div class="stat-val" id="m-vis">—</div><div class="stat-label">👁️ Jarak Pandang</div></div>
         </div>
       </div>
     </div>
   </div>
-  <div class="section-title">🏙️ Kota-Kota Utama Indonesia</div>
+
+  <div class="section-title" style="margin: 40px 0 20px; font-size: 1.3rem; color: var(--teal); border-bottom: 1px solid var(--card-border); padding-bottom: 10px;">🏙️ Kota Utama Indonesia</div>
   <div class="city-grid" id="city-grid"></div>
-  <div class="ad-mid">📢 IKLAN — Pasang Google AdSense Anda Di Sini</div>
-  <div class="section-title">💡 Tips Cuaca</div>
-  <div class="tips-grid">
-    <div class="tip-card"><h3>☔ Musim Hujan (Okt–Mar)</h3><p>Selalu bawa payung atau jas hujan. Curah hujan tinggi terutama sore dan malam hari.</p></div>
-    <div class="tip-card"><h3>☀️ Musim Kemarau (Apr–Sep)</h3><p>Gunakan tabir surya dan minum air putih yang cukup. Suhu bisa mencapai 35°C.</p></div>
-    <div class="tip-card"><h3>🌊 Cuaca Pesisir</h3><p>Pantau prakiraan angin dan gelombang sebelum berlayar atau berenang di pantai.</p></div>
-    <div class="tip-card"><h3>🏔️ Cuaca Pegunungan</h3><p>Daerah Dieng, Bromo, Puncak bisa sangat dingin di malam hari. Bawa jaket tebal.</p></div>
-  </div>
+
   <footer>
-    <p>© 2025 <strong>CuacaIndo</strong> — Data dari OpenWeatherMap | Cuaca Indonesia Terpercaya</p>
-    <p style="margin-top:6px;">Jakarta · Surabaya · Bali · Medan · Bandung · Makassar · Yogyakarta · Semarang</p>
+    <p>© 2026 <strong>CuacaIndo</strong> — Real-time Weather Station</p>
+    <p style="margin-top:15px;">
+      <a href="javascript:void(0)" onclick="togglePrivacy(true)">Kebijakan Privasi</a> | 
+      <a href="#">Hubungi Kami</a>
+    </p>
   </footer>
+</div>
+
+<div id="privacy-modal">
+  <div class="modal-content">
+    <span class="close-modal" onclick="togglePrivacy(false)">&times;</span>
+    <h2>Kebijakan Privasi</h2>
+    <p>Di CuacaIndo, privasi Anda adalah prioritas kami. Halaman ini menjelaskan cara kerja data pada situs kami.</p>
+    <p><strong>1. Pencarian Data:</strong> Kami tidak menyimpan riwayat pencarian pribadi Anda. Nama kota yang Anda masukkan hanya digunakan untuk memanggil data cuaca melalui OpenWeatherMap API.</p>
+    <p><strong>2. Cookies:</strong> Kami menggunakan cookies teknis untuk memastikan website berjalan lancar dan memberikan respons yang cepat pada perangkat Anda.</p>
+    <p><strong>3. Layanan Pihak Ketiga:</strong> Kami menggunakan API eksternal dan mungkin menampilkan iklan pihak ketiga (seperti Monetag) untuk mendukung operasional gratis situs ini.</p>
+    <p><strong>4. Keamanan:</strong> Kami tidak meminta data sensitif seperti email atau nomor telepon.</p>
+    <p style="color: var(--teal); font-weight: bold; margin-top: 20px;">Terima kasih telah menggunakan CuacaIndo!</p>
+  </div>
 </div>
 
 <script>
   const API_KEY = '82be2db14f9b737940ac1a0e8f3c93a7';
+  
+  function updateClock() {
+    const now = new Date();
+    
+    // Indonesia (Jakarta/WIB) Time Options
+    const timeOptions = {
+      timeZone: 'Asia/Jakarta',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    };
 
+    const dateOptions = {
+      timeZone: 'Asia/Jakarta',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      weekday: 'long'
+    };
+
+    // Update the clock text
+    document.getElementById('clock').textContent = now.toLocaleTimeString('id-ID', timeOptions);
+    // Update the date text
+    document.getElementById('date-display').textContent = now.toLocaleDateString('id-ID', dateOptions);
+  }
+
+  // Run clock every second
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // Extended City List
   const CITIES = [
-    {name:'Jakarta',   id:1642911},{name:'Surabaya', id:1625822},
-    {name:'Bali',      id:1650218},{name:'Medan',    id:1214520},
-    {name:'Bandung',   id:1649082},{name:'Makassar', id:1622786},
-    {name:'Yogyakarta',id:1624304},{name:'Semarang', id:1627896},
+    {name:'Jakarta', id:1642911}, {name:'Surabaya', id:1625822},
+    {name:'Bandung', id:1649082}, {name:'Medan', id:1214520},
+    {name:'Semarang', id:1627896}, {name:'Makassar', id:1622786},
+    {name:'Palembang', id:1633070}, {name:'Batam', id:1649378},
+    {name:'Pekanbaru', id:1631762}, {name:'Denpasar', id:1645523},
+    {name:'Yogyakarta', id:1624304}, {name:'Malang', id:1636544},
+    {name:'Balikpapan', id:1648147}, {name:'Banjarmasin', id:1648759},
+    {name:'Manado', id:1636422}, {name:'Pontianak', id:1630789}
   ];
 
   function getIcon(code){
@@ -141,88 +228,116 @@
     if(c.startsWith('2'))return'⛈️';
     if(c.startsWith('3'))return'🌦️';
     if(c.startsWith('5'))return'🌧️';
-    if(c.startsWith('6'))return'❄️';
-    if(c.startsWith('7'))return'🌫️';
-    if(c==='800')return'☀️';
+    if(c.startsWith('800'))return'☀️';
     if(c.startsWith('8'))return'⛅';
     return'🌤️';
   }
 
-  function descID(desc){
-    const map={'clear sky':'Cerah','few clouds':'Sedikit Berawan','scattered clouds':'Berawan',
-      'broken clouds':'Berawan Banyak','shower rain':'Hujan Ringan','rain':'Hujan',
-      'thunderstorm':'Badai Petir','snow':'Salju','mist':'Berkabut','overcast clouds':'Mendung',
-      'light rain':'Hujan Ringan','moderate rain':'Hujan Sedang',
-      'heavy intensity rain':'Hujan Lebat','haze':'Kabut','fog':'Kabut Tebal'};
-    return map[desc.toLowerCase()]||desc;
-  }
-
   function updateClock(){
     const now=new Date();
-    document.getElementById('clock').textContent=now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    document.getElementById('date-display').textContent=now.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    document.getElementById('clock').textContent=now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('date-display').textContent=now.toLocaleDateString('id-ID',{day:'numeric',month:'short'});
   }
   setInterval(updateClock,1000); updateClock();
 
-  async function fetchById(id){
-    try{const r=await fetch(`https://api.openweathermap.org/data/2.5/weather?id=${id}&appid=${API_KEY}&units=metric&lang=id`);return r.ok?r.json():null;}catch{return null;}
-  }
+  // Populate Dropdown
+  const dropdown = document.getElementById('city-dropdown');
+  CITIES.sort((a,b) => a.name.localeCompare(b.name)).forEach(city => {
+    const opt = document.createElement('option');
+    opt.value = city.name;
+    opt.textContent = city.name;
+    dropdown.appendChild(opt);
+  });
 
-  async function fetchByName(name){
-    try{
-      const r=await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(name)},ID&appid=${API_KEY}&units=metric&lang=id`);
-      if(!r.ok){showError();return;}
-      showMain(await r.json());
-    }catch{showError();}
+  async function fetchWeather(query, isId = false) {
+    const url = isId 
+      ? `https://api.openweathermap.org/data/2.5/weather?id=${query}&appid=${API_KEY}&units=metric&lang=id`
+      : `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(query)},ID&appid=${API_KEY}&units=metric&lang=id`;
+    
+    try {
+      const r = await fetch(url);
+      const d = await r.json();
+      
+      // FIX: Check if d.main exists before accessing properties
+      if(!r.ok || !d.main) {
+        throw new Error("Invalid response");
+      }
+
+      showMain(d);
+      document.getElementById('error-msg').style.display = 'none';
+    } catch (err) {
+      console.error("Fetch Error:", err);
+      document.getElementById('error-msg').style.display = 'block';
+      document.getElementById('main-weather').style.display = 'none';
+    }
   }
 
   function showMain(d){
-    document.getElementById('error-msg').style.display='none';
+    // Safe check
+    if(!d || !d.main) return;
+
     document.getElementById('main-weather').style.display='block';
     document.getElementById('m-icon').textContent=getIcon(d.weather[0].id);
     document.getElementById('m-city').textContent=d.name;
     document.getElementById('m-temp').textContent=Math.round(d.main.temp)+'°C';
-    document.getElementById('m-desc').textContent=descID(d.weather[0].description);
+    document.getElementById('m-desc').textContent=d.weather[0].description;
     document.getElementById('m-humidity').textContent=d.main.humidity+'%';
     document.getElementById('m-wind').textContent=Math.round(d.wind.speed*3.6)+' km/j';
     document.getElementById('m-feels').textContent=Math.round(d.main.feels_like)+'°C';
-    document.getElementById('m-vis').textContent=d.visibility?(d.visibility/1000).toFixed(1)+' km':'—';
-    const card=document.getElementById('m-card');
-    card.style.animation='none'; void card.offsetWidth; card.style.animation='fadeUp 0.5s ease forwards';
-    document.getElementById('main-weather').scrollIntoView({behavior:'smooth',block:'center'});
-  }
-
-  function showError(){
-    document.getElementById('error-msg').style.display='block';
-    document.getElementById('main-weather').style.display='none';
+    
+    // Smooth transition
+    document.getElementById('main-weather').scrollIntoView({behavior:'smooth', block:'center'});
   }
 
   function searchCity(){
     const val=document.getElementById('search-input').value.trim();
-    if(val) fetchByName(val);
+    if(val) fetchWeather(val);
   }
-  document.getElementById('search-input').addEventListener('keydown',e=>{if(e.key==='Enter')searchCity();});
 
-  function buildGrid(){
-    const grid=document.getElementById('city-grid');
-    CITIES.forEach((city,i)=>{
-      const card=document.createElement('div');
-      card.className='city-card';
-      card.style.animationDelay=(i*0.07)+'s';
-      card.innerHTML=`<div class="city-icon">🌤️</div><div class="city-name">${city.name}</div><div class="city-temp" id="t-${city.id}">Memuat...</div><div class="city-desc" id="d-${city.id}"></div>`;
-      card.onclick=()=>{document.getElementById('search-input').value=city.name; fetchById(city.id).then(d=>d&&showMain(d));};
+  function handleDropdown(val){
+    if(val) {
+      fetchWeather(val);
+      document.getElementById('search-input').value = ""; 
+    }
+  }
+
+  function togglePrivacy(show) {
+    document.getElementById('privacy-modal').style.display = show ? 'flex' : 'none';
+  }
+
+  function initGrid() {
+    const grid = document.getElementById('city-grid');
+    CITIES.forEach(city => {
+      const card = document.createElement('div');
+      card.className = 'city-card';
+      card.innerHTML = `
+        <div style="font-size:1.5rem; margin-bottom:8px;">📍</div>
+        <div style="font-weight:600; font-size:1rem; margin-bottom:4px;">${city.name}</div>
+        <div id="t-${city.id}" style="color:var(--teal2); font-size:1.3rem;">...</div>
+      `;
+      card.onclick = () => fetchWeather(city.id, true);
       grid.appendChild(card);
-      fetchById(city.id).then(d=>{
-        if(!d)return;
-        card.querySelector('.city-icon').textContent=getIcon(d.weather[0].id);
-        document.getElementById('t-'+city.id).textContent=Math.round(d.main.temp)+'°C';
-        document.getElementById('d-'+city.id).textContent=descID(d.weather[0].description);
-      });
+      
+      // Fetch small updates for grid cards
+      fetch(`https://api.openweathermap.org/data/2.5/weather?id=${city.id}&appid=${API_KEY}&units=metric`)
+        .then(r => r.json())
+        .then(d => {
+          // FIX: Defensive check for grid data
+          if(d && d.main) {
+            document.getElementById(`t-${city.id}`).textContent = Math.round(d.main.temp) + '°C';
+          } else {
+            document.getElementById(`t-${city.id}`).textContent = '--';
+          }
+        })
+        .catch(() => {
+          document.getElementById(`t-${city.id}`).textContent = 'ERR';
+        });
     });
   }
-  buildGrid();
-</script> <script src="https://pl29430775.profitablecpmratenetwork.com/50/76/fd/5076fdd90d4e4829e142d5ad25517357.js"></script>
-<script src="https://pl29430774.profitablecpmratenetwork.com/bd/81/97/bd81975a7801be1fa27f43e22996b5d2.js"></script>
+
+  window.onload = initGrid;
+  document.getElementById('search-input').addEventListener('keydown',e=>{if(e.key==='Enter')searchCity();});
+</script>
 
 </body>
 </html>
