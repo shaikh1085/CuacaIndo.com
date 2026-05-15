@@ -200,6 +200,50 @@
   }
   
   fetchMedan();
+  // Data translation helper
+function descID(d) {
+  const map = {
+    'clear sky': 'Cerah', 'few clouds': 'Berawan Sebagian',
+    'scattered clouds': 'Berawan', 'broken clouds': 'Berawan Tebal',
+    'overcast clouds': 'Mendung', 'light rain': 'Hujan Ringan',
+    'moderate rain': 'Hujan Sedang', 'heavy intensity rain': 'Hujan Lebat'
+  };
+  return map[d.toLowerCase()] || d;
+}
+
+// Weather icon helper
+function getIcon(id, icon) {
+  if(id >= 200 && id < 300) return '⛈️';
+  if(id >= 300 && id < 600) return '🌧️';
+  if(id >= 600 && id < 700) return '❄️';
+  if(id >= 700 && id < 800) return '🌫️';
+  if(id === 800) return icon.includes('d') ? '☀️' : '🌙';
+  return '☁️';
+}
+
+// Main Fetch Function for Medan
+async function fetchMedan() {
+  try {
+    // Standard working API key with direct city query
+    const r = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Medan,id&appid=b738e4a9e223b2e77df17c62b9a14c33&units=metric&lang=id`);
+    if(!r.ok) return;
+    const d = await r.json();
+    
+    // IDs must match your HTML elements exactly
+    if(document.getElementById('mdn-icon')) document.getElementById('mdn-icon').textContent = getIcon(d.weather[0].id, d.weather[0].icon);
+    if(document.getElementById('mdn-temp')) document.getElementById('mdn-temp').textContent = Math.round(d.main.temp)+'°C';
+    if(document.getElementById('mdn-desc')) document.getElementById('mdn-desc').textContent = descID(d.weather[0].description);
+    if(document.getElementById('mdn-humidity')) document.getElementById('mdn-humidity').textContent = d.main.humidity+'%';
+    if(document.getElementById('mdn-wind')) document.getElementById('mdn-wind').textContent = Math.round(d.wind.speed * 3.6)+' km/j';
+    if(document.getElementById('mdn-feels')) document.getElementById('mdn-feels').textContent = Math.round(d.main.feels_like)+'°C';
+    
+  } catch(e) { 
+    console.log("Error fetching Medan data: ", e); 
+  }
+}
+
+// Execute on load
+window.addEventListener('DOMContentLoaded', fetchMedan);
 </script>
 </body>
 </html>
