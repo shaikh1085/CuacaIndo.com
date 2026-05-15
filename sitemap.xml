@@ -24,4 +24,16 @@
       <changefreq>daily</changefreq>
       <priority>0.8</priority>
    </url>
+   <url>
+      <loc>https://cuacaindo-terkini.netlify.app/bandung</loc>
+      <lastmod>2026-05-16</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>0.8</priority>
+   </url>
+   <url>
+      <loc>https://cuacaindo-terkini.netlify.app/medan</loc>
+      <lastmod>2026-05-16</lastmod>
+      <changefreq>daily</changefreq>
+      <priority>0.8</priority>
+   </url>
 </urlset>
