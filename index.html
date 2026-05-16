@@ -96,10 +96,10 @@
     .section-title::after { content:''; flex:1; height:1px; background:linear-gradient(to right,rgba(255,255,255,0.1),transparent); }
     
     .city-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:20px; margin-bottom:40px; }
-    .city-card { background: var(--glass); border:1px solid var(--card-border); border-radius:20px; padding:24px; cursor:pointer; backdrop-filter: blur(15px); transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1); opacity:0; animation:fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .city-card { display: block; text-decoration: none; background: var(--glass); border:1px solid var(--card-border); border-radius:20px; padding:24px; cursor:pointer; backdrop-filter: blur(15px); transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1); opacity:0; animation:fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     .city-card:hover { transform:translateY(-6px); border-color:var(--teal); background: var(--glass-hover); box-shadow:0 15px 35px rgba(0,201,177,0.15); }
     .city-icon { font-size:2.5rem; margin-bottom:12px; }
-    .city-name { font-size:1.1rem; font-weight:500; margin-bottom:6px; }
+    .city-name { font-size:1.1rem; font-weight:500; margin-bottom:6px; color: var(--white); }
     .city-temp { font-size:2rem; font-weight:300; color:var(--teal2); }
     .city-desc { font-size:0.8rem; color:var(--muted); margin-top:6px; text-transform: capitalize; }
     
@@ -108,7 +108,7 @@
     .tip-card h3 { font-size:0.95rem; margin-bottom:8px; color:var(--gold); display: flex; align-items: center; gap: 6px; }
     .tip-card p { font-size:0.85rem; color:var(--muted); line-height:1.6; }
     
-    footer { border-top:1px solid rgba(255,255,255,0.06); padding:30px 0; text-align:center; color:var(--muted); font-size:0.85rem; margin-top: 60px; }
+    footer { border-top:1px solid rgba(255,255,255,0.06); padding:40px 0 30px; text-align:center; color:var(--muted); font-size:0.85rem; margin-top: 60px; }
     footer strong { color:var(--teal); }
     .error-msg { background:rgba(255,107,74,0.1); border:1px solid rgba(255,107,74,0.2); border-radius:14px; padding:16px; color:var(--coral); text-align:center; margin:15px auto; max-width: 540px; display:none; }
     
@@ -201,6 +201,16 @@
   </div>
 
   <footer>
+    <div style="margin-bottom: 25px; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px;">
+        <span style="color: var(--teal); font-weight: 700; display: block; margin-bottom: 12px; letter-spacing: 1px;">PRAKIRAAN CUACA KOTA POPULER:</span>
+        <div style="display: flex; justify-content: center; gap: 18px; flex-wrap: wrap;">
+            <a href="jakarta.html" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#00e5cc'" onmouseout="this.style.color='#8faecf'">Jakarta</a> · 
+            <a href="surabaya.html" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#00e5cc'" onmouseout="this.style.color='#8faecf'">Surabaya</a> · 
+            <a href="bali.html" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#00e5cc'" onmouseout="this.style.color='#8faecf'">Bali</a> · 
+            <a href="medan.html" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#00e5cc'" onmouseout="this.style.color='#8faecf'">Medan</a> · 
+            <a href="bandung.html" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#00e5cc'" onmouseout="this.style.color='#8faecf'">Bandung</a>
+        </div>
+    </div>
     <p>© 2026 <strong>CuacaIndo</strong> — Data dari OpenWeatherMap</p>
     <p style="margin-top:6px; opacity: 0.6;">Jakarta · Surabaya · Bali · Medan · Bandung · Makassar</p>
   </footer>
@@ -253,7 +263,7 @@
   setInterval(updateClock, 1000); 
   updateClock();
 
-  // ADVANCED WEATHER VISUAL EFFECTS INTERACTIVE ENGINE
+  // ADVANCED WEATHER VISUAL EFFECTS ENGINE
   function applyWeatherEffects(weatherId, iconCode) {
       const effectsContainer = document.getElementById('weather-effects');
       effectsContainer.innerHTML = ''; 
@@ -306,7 +316,6 @@
       document.getElementById('forecast-title').innerHTML = `📅 Prakiraan Cuaca Berkelanjutan — ${data.city.name}`;
       document.getElementById('forecast-section').style.display = 'block';
 
-      // OpenWeather 5-day offers 3-hour chunks, we filter to display one unique card per day
       const seenDates = new Set();
       let count = 0;
 
@@ -315,7 +324,6 @@
          const dayName = dateObj.toLocaleDateString('id-ID', { weekday: 'long' });
          const dateString = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
          
-         // Select mid-day data chunks for consistency
          if(!seenDates.has(dayName) && count < 6) {
             seenDates.add(dayName);
             count++;
@@ -394,14 +402,16 @@
 
   document.getElementById('search-input').addEventListener('keydown',e=>{if(e.key==='Enter')searchCity();});
 
+  // SEO LINK-BASED GRID BUILDER
   async function buildGrid(){
     const grid=document.getElementById('city-grid');
     grid.innerHTML = ''; 
     
     CITIES.forEach((city, i) => {
-      const card = document.createElement('div');
+      const card = document.createElement('a');
       card.className = 'city-card';
       card.id = `ccard-${city.id}`;
+      card.href = `${city.name.toLowerCase()}.html`;
       card.style.animationDelay = (i * 0.04) + 's';
       card.innerHTML = `
         <div class="city-icon" id="icon-${city.id}">⏳</div>
@@ -409,7 +419,10 @@
         <div class="city-temp" id="t-${city.id}">Memuat...</div>
         <div class="city-desc" id="d-${city.id}">Sabar ya...</div>
       `;
-      card.onclick = () => {
+      
+      // Keep on-page dynamic load active when inside index page context
+      card.addEventListener('click', (e) => {
+          e.preventDefault(); 
           document.getElementById('search-input').value = city.name; 
           document.getElementById('city-dropdown').value = '';
           fetchSingleId(city.id).then(d => {
@@ -418,7 +431,7 @@
                 fetchForecast(d.name);
              }
           });
-      };
+      });
       grid.appendChild(card);
     });
 
