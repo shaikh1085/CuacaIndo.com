@@ -40,7 +40,7 @@
   }
   </script>
 </head>
-<body class="text-white antialiased flex flex-col justify-between min-height-screen">
+<body class="text-white antialiased flex flex-col justify-between min-h-screen">
 
   <nav class="max-w-6xl w-full mx-auto px-6 py-6 flex justify-between items-center">
     <div class="flex items-center space-x-2">
@@ -63,7 +63,7 @@
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
         <div>
           <h2 class="text-2xl md:text-3xl font-bold mb-1">Medan, Sumatera Utara, ID</h2>
-          <p id="mdn-desc" class="text-[#00c9b1] text-lg font-medium tracking-wide">Memuat Data...</p>
+          <p id="mdn-desc" class="text-gray-400 text-lg font-medium tracking-wide">Memuat Data...</p>
         </div>
         <div class="flex items-center space-x-4">
           <div id="mdn-icon" class="text-6xl md:text-7xl filter drop-shadow-md">☁️</div>
@@ -71,17 +71,17 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-3 gap-4 border-t border-gray-800 pt-6">
-        <div class="bg-black/20 rounded-xl p-3 text-center">
+      <div class="grid grid-cols-3 gap-4 border-t border-gray-800/60 pt-6">
+        <div class="text-center">
           <p class="text-gray-400 text-xs mb-1">💧 Kelembaban</p>
           <span id="mdn-humidity" class="text-base md:text-lg font-bold text-[#00c9b1]">--%</span>
         </div>
-        <div class="bg-black/20 rounded-xl p-3 text-center">
+        <div class="text-center">
           <p class="text-gray-400 text-xs mb-1">💨 Angin</p>
           <span id="mdn-wind" class="text-base md:text-lg font-bold text-[#00c9b1]">-- km/j</span>
         </div>
-        <div class="bg-black/20 rounded-xl p-3 text-center">
-          <p class="text-gray-400 text-xs mb-1">🌡️ Terasa</p>
+        <div class="text-center">
+          <p class="text-gray-400 text-xs mb-1">室 Terasa</p>
           <span id="mdn-feels" class="text-base md:text-lg font-bold text-[#00c9b1]">--°C</span>
         </div>
       </div>
@@ -97,7 +97,6 @@
   <script>
     const API_KEY = 'b738e4a9e223b2e77df17c62b9a14c33';
 
-    // Icon Filter
     function getIcon(code, iconStr) {
       if(!code) return '☁️';
       const c = String(code);
@@ -110,25 +109,23 @@
       return '☁️';
     }
 
-    // Translation Map
     function descID(desc) {
       const map = {
         'clear sky': 'Cerah', 'few clouds': 'Berawan Sebagian',
         'scattered clouds': 'Berawan', 'broken clouds': 'Berawan Tebal',
-        'overcast clouds': 'Mendung', 'light rain': 'Hujan Ringan',
+        'overcast clouds': 'Awan Mendung', 'light rain': 'Hujan Ringan',
         'moderate rain': 'Hujan Sedang', 'heavy intensity rain': 'Hujan Lebat'
       };
       return map[desc.toLowerCase()] || desc;
     }
 
-    // Dynamic Weather Data Fetch
     async function fetchMedan() {
       try {
         const r = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Medan,id&appid=${API_KEY}&units=metric&lang=id`);
         if(!r.ok) return;
         const d = await r.json();
 
-        // Target elements and inject values safely
+        // Safe DOM Injection mapping matching IDs perfectly
         if(document.getElementById('mdn-icon')) document.getElementById('mdn-icon').textContent = getIcon(d.weather[0].id, d.weather[0].icon);
         if(document.getElementById('mdn-temp')) document.getElementById('mdn-temp').textContent = Math.round(d.main.temp) + '°C';
         if(document.getElementById('mdn-desc')) document.getElementById('mdn-desc').textContent = descID(d.weather[0].description);
@@ -137,11 +134,10 @@
         if(document.getElementById('mdn-feels')) document.getElementById('mdn-feels').textContent = Math.round(d.main.feels_like) + '°C';
 
       } catch(e) {
-        console.log("Medan Core system fetch error:", e);
+        console.log("System error:", e);
       }
     }
 
-    // Execute when structure loaded
     window.addEventListener('DOMContentLoaded', fetchMedan);
   </script>
 </body>
