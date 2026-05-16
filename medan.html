@@ -62,7 +62,7 @@
       
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
         <div>
-          <h2 class="text-2xl md:text-3xl font-bold mb-1">Medan, Sumatera Utara, ID</h2>
+          <h2 class="text-2xl md:text-3xl font-bold mb-1">Medan, Sumatera Utara, ID <span class="text-sm text-gray-500 font-normal">ID</span></h2>
           <p id="mdn-desc" class="text-gray-400 text-lg font-medium tracking-wide">Memuat Data...</p>
         </div>
         <div class="flex items-center space-x-4">
@@ -81,7 +81,7 @@
           <span id="mdn-wind" class="text-base md:text-lg font-bold text-[#00c9b1]">-- km/j</span>
         </div>
         <div class="text-center">
-          <p class="text-gray-400 text-xs mb-1">室 Terasa</p>
+          <p class="text-gray-400 text-xs mb-1">🌡️ Terasa</p>
           <span id="mdn-feels" class="text-base md:text-lg font-bold text-[#00c9b1]">--°C</span>
         </div>
       </div>
@@ -125,13 +125,27 @@
         if(!r.ok) return;
         const d = await r.json();
 
-        // Safe DOM Injection mapping matching IDs perfectly
-        if(document.getElementById('mdn-icon')) document.getElementById('mdn-icon').textContent = getIcon(d.weather[0].id, d.weather[0].icon);
-        if(document.getElementById('mdn-temp')) document.getElementById('mdn-temp').textContent = Math.round(d.main.temp) + '°C';
-        if(document.getElementById('mdn-desc')) document.getElementById('mdn-desc').textContent = descID(d.weather[0].description);
-        if(document.getElementById('mdn-humidity')) document.getElementById('mdn-humidity').textContent = d.main.humidity + '%';
-        if(document.getElementById('mdn-wind')) document.getElementById('mdn-wind').textContent = Math.round(d.wind.speed * 3.6) + ' km/j';
-        if(document.getElementById('mdn-feels')) document.getElementById('mdn-feels').textContent = Math.round(d.main.feels_like) + '°C';
+        // 1. Icon update (Targets ID or fallback classes)
+        const iconEl = document.getElementById('mdn-icon') || document.querySelector('.text-6xl') || document.querySelector('[id*="icon"]');
+        if(iconEl) iconEl.textContent = getIcon(d.weather[0].id, d.weather[0].icon);
+
+        // 2. Temp update
+        const tempEl = document.getElementById('mdn-temp') || document.querySelector('.tracking-tighter') || document.querySelector('[id*="temp"]');
+        if(tempEl) tempEl.textContent = Math.round(d.main.temp) + '°C';
+
+        // 3. Description update
+        const descEl = document.getElementById('mdn-desc') || document.querySelector('.text-lg') || document.querySelector('[id*="desc"]');
+        if(descEl) descEl.textContent = descID(d.weather[0].description);
+
+        // 4. Extra stats update
+        const humEl = document.getElementById('mdn-humidity') || document.querySelector('span');
+        if(humEl) humEl.textContent = d.main.humidity + '%';
+
+        const windEl = document.getElementById('mdn-wind');
+        if(windEl) windEl.textContent = Math.round(d.wind.speed * 3.6) + ' km/j';
+
+        const feelsEl = document.getElementById('mdn-feels');
+        if(feelsEl) feelsEl.textContent = Math.round(d.main.feels_like) + '°C';
 
       } catch(e) {
         console.log("System error:", e);
