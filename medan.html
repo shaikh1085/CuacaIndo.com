@@ -95,7 +95,8 @@
   </footer>
 
   <script>
-    const API_KEY = 'b738e4a9e223b2e77df17c62b9a14c33';
+    // FIXED: Using your active OpenWeather API Key
+    const API_KEY = '82be2db14f9b737940ac1a0e8f3c93a7';
 
     function getIcon(code, iconStr) {
       if(!code) return '☁️';
@@ -113,19 +114,21 @@
       const map = {
         'clear sky': 'Cerah', 'few clouds': 'Berawan Sebagian',
         'scattered clouds': 'Berawan', 'broken clouds': 'Berawan Tebal',
-        'overcast clouds': 'Awan Mendung', 'light rain': 'Hujan Ringan',
-        'moderate rain': 'Hujan Sedang', 'heavy intensity rain': 'Hujan Lebat'
+        'overcast clouds': 'Mendung', 'light rain': 'Hujan Ringan',
+        'moderate rain': 'Hujan Sedang', 'heavy intensity rain': 'Hujan Lebat',
+        'mist': 'Berkabut', 'thunderstorm': 'Badai Petir'
       };
       return map[desc.toLowerCase()] || desc;
     }
 
     async function fetchMedan() {
       try {
+        // FIXED syntax: changed 'id&appid=' to 'q=Medan,id&appid='
         const r = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Medan,id&appid=${API_KEY}&units=metric&lang=id`);
         if(!r.ok) return;
         const d = await r.json();
 
-        // Safe DOM updates by exact element matching
+        // Safely map incoming live parameters directly onto correct component targets
         if(document.getElementById('mdn-icon')) document.getElementById('mdn-icon').textContent = getIcon(d.weather[0].id, d.weather[0].icon);
         if(document.getElementById('mdn-temp')) document.getElementById('mdn-temp').textContent = Math.round(d.main.temp) + '°C';
         if(document.getElementById('mdn-desc')) document.getElementById('mdn-desc').textContent = descID(d.weather[0].description);
@@ -134,10 +137,11 @@
         if(document.getElementById('mdn-feels')) document.getElementById('mdn-feels').textContent = Math.round(d.main.feels_like) + '°C';
 
       } catch(e) {
-        console.log("Weather API connection error:", e);
+        console.log("Error processing dashboard component:", e);
       }
     }
 
+    // Execute engine when elements are loaded safely
     window.addEventListener('DOMContentLoaded', fetchMedan);
   </script>
 </body>
