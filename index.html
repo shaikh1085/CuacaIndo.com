@@ -109,52 +109,7 @@
   </style>
 </head>
 <body>
-/* Navigation Menu Styling */
-header {
-    display: flex;
-    justify-content: space-between; /* Logo ek taraf aur menu links doosri taraf */
-    align-items: center;
-    padding: 20px 0;
-    border-bottom: 1px solid var(--card-border);
-    flex-wrap: wrap; /* Mobile par screen ke mutabik adjust hone ke liye */
-    gap: 15px;
-}
 
-nav {
-    display: flex;
-    gap: 20px; /* Links ko khula-khula rakhne ke liye gap */
-}
-
-nav a {
-    text-decoration: none; /* Underline hatane ke liye */
-    color: #ffffff; /* Saaf white text */
-    font-weight: 500;
-    font-size: 0.95rem;
-    padding: 6px 14px;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-    border: 1px solid transparent;
-}
-
-/* Jab user link par mouse le jaye (Hover effect) */
-nav a:hover {
-    color: var(--teal2); /* Text halka neon teal ho jayega */
-    background: rgba(0, 201, 177, 0.1); /* Peeche halka background glow aayega */
-    border-color: var(--card-border);
-}
-
-/* Mobile responsive ke liye chota sa adjustment */
-@media (max-width: 768px) {
-    header {
-        flex-direction: column;
-        text-align: center;
-    }
-    nav {
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-}
 <div id="weather-effects"></div>
 
 <div class="bg-orbs">
