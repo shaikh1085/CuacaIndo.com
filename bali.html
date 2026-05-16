@@ -1,3 +1,4 @@
+<!-- Copy of jakarta.html with CITY_NAME = "Bali" and CITY_ID = "1650218" -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -7,229 +8,132 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --sky: #0a1628; --teal: #00c9b1; --teal2: #00e5cc;
-      --gold: #f5c842; --white: #f0f6ff; --muted: #7a9cc0;
-      --card: rgba(255,255,255,0.05); --card-border: rgba(0,201,177,0.2);
-    }
+    :root { --sky: #0a1628; --teal: #00c9b1; --teal2: #00e5cc; --gold: #f5c842; --white: #f0f6ff; --muted: #7a9cc0; --card: rgba(255,255,255,0.05); --card-border: rgba(0,201,177,0.2); }
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:'DM Sans',sans-serif; background:var(--sky); color:var(--white); min-height:100vh; overflow-x:hidden; transition: background 1s ease; }
-    
-    /* Background & Effects */
     #weather-effects { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
     .bg-orbs { position:fixed; inset:0; z-index:0; pointer-events:none; }
     .orb { position:absolute; border-radius:50%; filter:blur(80px); opacity:0.15; animation:drift 18s infinite alternate; }
     .orb1 { width:600px; height:600px; background:var(--teal); top:-200px; left:-150px; }
     @keyframes drift { from{transform:translate(0,0)} to{transform:translate(40px,30px)} }
-
-    /* Rain Drops */
     .drop { position: absolute; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.6)); width: 2px; height: 80px; bottom: 100%; animation: rain linear infinite; }
     @keyframes rain { 0% { transform: translateY(0); } 100% { transform: translateY(120vh); } }
-    
-    /* Sun Flare */
     .sun-flare { position: absolute; top: -100px; left: -100px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0) 70%); border-radius: 50%; animation: pulse 4s infinite alternate; }
     @keyframes pulse { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(1.1); opacity: 0.9; } }
-
-    /* Stars */
     .star { position: absolute; background: #fff; border-radius: 50%; animation: twinkle infinite alternate; }
     @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 1; } }
-
     .wrapper { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:20px; }
-    
     header { display:flex; justify-content:space-between; align-items:center; padding:20px 0; border-bottom:1px solid var(--card-border); }
     .logo { font-family:'Playfair Display',serif; font-size:1.5rem; text-decoration:none; color:white; }
     .logo span { color:var(--teal); }
     .back-btn { text-decoration:none; color:var(--muted); font-size:0.9rem; transition:0.3s; }
-    .back-btn:hover { color:var(--teal); }
-
-    .hero { text-align:center; padding:60px 0; animation: fadeUp 0.8s ease; }
-    @keyframes fadeUp { from{opacity:0; transform:translateY(30px)} to{opacity:1; transform:translateY(0)} }
+    .hero { text-align:center; padding:60px 0; }
     .hero h1 { font-family:'Playfair Display',serif; font-size:3.5rem; margin-bottom:10px; }
     .hero h1 span { color:var(--teal); }
-    .hero p { color:var(--muted); font-size:1rem; letter-spacing:1px; }
-
+    .clock-container { background:rgba(0,0,0,0.3); padding:10px 20px; border-radius:50px; display:inline-flex; align-items:center; gap:15px; margin-bottom:20px; border:1px solid var(--card-border); }
+    #live-clock { font-weight:700; color:var(--teal); font-size:1.1rem; }
     .main-card { background:linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border:1px solid var(--card-border); border-radius:30px; padding:40px; backdrop-filter:blur(15px); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; }
-    .weather-info h2 { font-size:1.5rem; margin-bottom:5px; }
-    .weather-info .desc { color:var(--teal); text-transform:capitalize; font-weight:500; }
     .temp-large { font-size:6rem; font-weight:300; background:linear-gradient(to bottom, #fff, var(--teal)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
     .big-icon { font-size:7rem; }
-
     .stats-row { display:grid; grid-template-columns: repeat(3, 1fr); gap:15px; margin-top:30px; }
     .stat-item { background:rgba(255,255,255,0.03); border:1px solid var(--card-border); border-radius:20px; padding:20px; text-align:center; }
     .stat-item .val { font-size:1.4rem; font-weight:600; color:var(--teal2); display:block; }
-    .stat-item .lab { font-size:0.75rem; color:var(--muted); text-transform:uppercase; margin-top:5px; }
-
     .share-section { margin-top:40px; text-align:center; }
-    .share-title { font-size:0.9rem; color:var(--muted); margin-bottom:15px; }
     .share-btns { display:flex; justify-content:center; gap:15px; }
-    .share-btn { padding:12px 25px; border-radius:50px; text-decoration:none; font-weight:600; font-size:0.9rem; display:flex; align-items:center; gap:8px; transition:0.3s; }
+    .share-btn { padding:12px 25px; border-radius:50px; text-decoration:none; font-weight:600; font-size:0.9rem; transition:0.3s; cursor: pointer; }
     .wa { background:#25D366; color:white; }
     .tw { background:#000; color:white; border:1px solid #333; }
-    .share-btn:hover { transform:scale(1.05); filter:brightness(1.1); }
-
-    .clock-container { background:rgba(0,0,0,0.3); padding:10px 20px; border-radius:50px; display:inline-flex; align-items:center; gap:15px; margin-bottom:20px; border:1px solid var(--card-border); }
-    #live-clock { font-weight:700; color:var(--teal); font-size:1.1rem; }
-    #live-date { font-size:0.8rem; color:var(--muted); }
-
-    @media (max-width: 600px) {
-        .main-card { flex-direction:column; text-align:center; padding:30px; }
-        .hero h1 { font-size:2.5rem; }
-        .temp-large { font-size:4.5rem; }
-        .stats-row { grid-template-columns: 1fr; }
-    }
   </style>
 </head>
 <body>
-
 <div id="weather-effects"></div>
 <div class="bg-orbs"><div class="orb orb1"></div></div>
-
 <div class="wrapper">
-  <header>
-    <a href="index.html" class="logo">Cuaca<span>Indo</span></a>
-    <a href="index.html" class="back-btn">← Kembali ke Beranda</a>
-  </header>
-
+  <header><a href="index.html" class="logo">Cuaca<span>Indo</span></a><a href="index.html" class="back-btn">← Kembali</a></header>
   <div class="hero">
-    <div class="clock-container">
-        <span id="live-clock">00:00:00</span>
-        <span style="color:rgba(255,255,255,0.2)">|</span>
-        <span id="live-date">Memuat Tanggal...</span>
-    </div>
+    <div class="clock-container"><span id="live-clock">00:00:00</span><span id="live-date" style="color:var(--muted); font-size:0.8rem;">...</span></div>
     <h1 id="city-title">Cuaca <span>Bali</span></h1>
-    <p>Prakiraan cuaca real-time langsung dari satelit</p>
   </div>
-
   <div class="main-card">
     <div class="weather-info">
         <h2 id="display-name">Bali, Indonesia</h2>
-        <div class="desc" id="weather-desc">Memuat data...</div>
+        <div class="desc" id="weather-desc" style="color:var(--teal);">Memuat data...</div>
         <div class="temp-large" id="main-temp">--°C</div>
     </div>
     <div class="big-icon" id="main-icon">⛅</div>
   </div>
-
   <div class="stats-row">
-    <div class="stat-item">
-        <span class="val" id="stat-hum">--%</span>
-        <span class="lab">💧 Kelembaban</span>
-    </div>
-    <div class="stat-item">
-        <span class="val" id="stat-wind">-- km/j</span>
-        <span class="lab">💨 Kecepatan Angin</span>
-    </div>
-    <div class="stat-item">
-        <span class="val" id="stat-feels">--°C</span>
-        <span class="lab">🌡️ Terasa Seperti</span>
-    </div>
+    <div class="stat-item"><span class="val" id="stat-hum">--%</span><span style="font-size:0.7rem; color:var(--muted);">KELEMBABAN</span></div>
+    <div class="stat-item"><span class="val" id="stat-wind">-- km/j</span><span style="font-size:0.7rem; color:var(--muted);">ANGIN</span></div>
+    <div class="stat-item"><span class="val" id="stat-feels">--°C</span><span style="font-size:0.7rem; color:var(--muted);">TERASA</span></div>
   </div>
-
   <div class="share-section">
-    <div class="share-title">Bagikan info cuaca ini:</div>
+    <div style="margin-bottom:15px; color:var(--muted);">Bagikan info ini:</div>
     <div class="share-btns">
-        <a href="#" id="share-wa" class="share-btn wa">WhatsApp</a>
-        <a href="#" id="share-tw" class="share-btn tw">Twitter (X)</a>
+        <a id="share-wa" class="share-btn wa" target="_blank">WhatsApp</a>
+        <a id="share-tw" class="share-btn tw" target="_blank">Twitter (X)</a>
     </div>
   </div>
-
-  <footer style="margin-top:80px; text-align:center; color:var(--muted); font-size:0.8rem; padding-bottom:40px;">
-    © 2026 CuacaIndo — Data Real-time Akurat
-  </footer>
 </div>
-
 <script>
-  // --- CONFIGURATION ---
-  const CITY_NAME = "Bali"; // Change this for each file
-  const CITY_ID = "1650218"; // Change this for each file (Bali: 1650218, Jakarta: 1642911, etc.)
+  const CITY_NAME = "Bali";
+  const CITY_ID = "1650218";
   const API_KEY = "82be2db14f9b737940ac1a0e8f3c93a7";
-
-  // --- LIVE CLOCK ---
   function updateClock() {
     const now = new Date();
-    const optionsTime = { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-    const optionsDate = { timeZone: 'Asia/Jakarta', weekday: 'long', day: 'numeric', month: 'long' };
-    
-    document.getElementById('live-clock').textContent = new Intl.DateTimeFormat('id-ID', optionsTime).format(now) + " WIB";
-    document.getElementById('live-date').textContent = new Intl.DateTimeFormat('id-ID', optionsDate).format(now);
+    document.getElementById('live-clock').textContent = now.toLocaleTimeString('id-ID', { hour12: false }) + " WIB";
+    document.getElementById('live-date').textContent = "| " + now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
   }
-  setInterval(updateClock, 1000);
-  updateClock();
-
-  // --- WEATHER EFFECTS ---
+  setInterval(updateClock, 1000); updateClock();
   function applyEffects(id, icon) {
     const container = document.getElementById('weather-effects');
     container.innerHTML = '';
     const isNight = icon.includes('n');
-
-    // Rain
     if (id >= 200 && id < 600) {
-      for (let i = 0; i < 50; i++) {
-        let d = document.createElement('div');
-        d.className = 'drop';
-        d.style.left = Math.random() * 100 + 'vw';
-        d.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
-        d.style.animationDelay = Math.random() * 2 + 's';
+      for (let i = 0; i < 40; i++) {
+        let d = document.createElement('div'); d.className = 'drop'; d.style.left = Math.random() * 100 + 'vw';
+        d.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's'; d.style.animationDelay = Math.random() * 2 + 's';
         container.appendChild(d);
       }
-    }
-    // Sun
-    else if (id === 800 && !isNight) {
-      let s = document.createElement('div');
-      s.className = 'sun-flare';
-      container.appendChild(s);
-    }
-    // Stars
-    else if (isNight && id >= 800) {
-        for (let i = 0; i < 60; i++) {
-            let star = document.createElement('div');
-            star.className = 'star';
-            star.style.width = star.style.height = Math.random() * 3 + 'px';
-            star.style.left = Math.random() * 100 + 'vw';
-            star.style.top = Math.random() * 100 + 'vh';
-            star.style.animationDuration = (Math.random() * 2 + 1) + 's';
-            container.appendChild(star);
+    } else if (id === 800 && !isNight) {
+      let s = document.createElement('div'); s.className = 'sun-flare'; container.appendChild(s);
+    } else if (isNight) {
+        for (let i = 0; i < 50; i++) {
+            let star = document.createElement('div'); star.className = 'star';
+            star.style.width = star.style.height = Math.random() * 2 + 'px';
+            star.style.left = Math.random() * 100 + 'vw'; star.style.top = Math.random() * 100 + 'vh';
+            star.style.animationDuration = (Math.random() * 3 + 1) + 's'; container.appendChild(star);
         }
     }
   }
-
-  function getIcon(id, icon) {
+  function getEmoji(id, icon) {
     if (id >= 200 && id < 300) return "⛈️";
     if (id >= 300 && id < 600) return "🌧️";
     if (id === 800) return icon.includes('n') ? "🌙" : "☀️";
     return "⛅";
   }
-
   async function getWeatherData() {
     try {
       const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?id=${CITY_ID}&appid=${API_KEY}&units=metric&lang=id`);
       const data = await res.json();
-      
-      const temp = Math.round(data.main.temp);
-      const desc = data.weather[0].description;
-      
-      document.getElementById('main-temp').textContent = temp + "°C";
-      document.getElementById('weather-desc').textContent = desc;
-      document.getElementById('main-icon').textContent = getIcon(data.weather[0].id, data.weather[0].icon);
-      document.getElementById('stat-hum').textContent = data.main.humidity + "%";
-      document.getElementById('stat-wind').textContent = Math.round(data.wind.speed * 3.6) + " km/j";
-      document.getElementById('stat-feels').textContent = Math.round(data.main.feels_like) + "°C";
-
-      applyEffects(data.weather[0].id, data.weather[0].icon);
-
-      // Social Links
-      const shareText = `Halo! Cuaca di ${CITY_NAME} saat ini ${desc} dengan suhu ${temp}°C. Cek selengkapnya di CuacaIndo!`;
-      const url = window.location.href;
-      document.getElementById('share-wa').href = `https://wa.me/?text=${encodeURIComponent(shareText + " " + url)}`;
-      document.getElementById('share-tw').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(url)}`;
-
-    } catch (e) {
-      console.error("Gagal memuat data", e);
-    }
+      if(data.main) {
+        const temp = Math.round(data.main.temp);
+        const desc = data.weather[0].description;
+        document.getElementById('main-temp').textContent = temp + "°C";
+        document.getElementById('weather-desc').textContent = desc;
+        document.getElementById('main-icon').textContent = getEmoji(data.weather[0].id, data.weather[0].icon);
+        document.getElementById('stat-hum').textContent = data.main.humidity + "%";
+        document.getElementById('stat-wind').textContent = Math.round(data.wind.speed * 3.6) + " km/j";
+        document.getElementById('stat-feels').textContent = Math.round(data.main.feels_like) + "°C";
+        const shareText = `Cuaca di ${CITY_NAME} saat ini ${desc} (${temp}°C). Cek di CuacaIndo!`;
+        const currentUrl = window.location.href;
+        document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + " " + currentUrl)}`;
+        document.getElementById('share-tw').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(currentUrl)}`;
+        applyEffects(data.weather[0].id, data.weather[0].icon);
+      }
+    } catch (e) { document.getElementById('weather-desc').textContent = "Error loading data."; }
   }
-
   getWeatherData();
-  const CITY_NAME = "Bali";
-  const CITY_ID = "1650218";
 </script>
 </body>
 </html>
