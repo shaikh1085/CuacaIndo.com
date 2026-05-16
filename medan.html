@@ -24,21 +24,6 @@
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
   </style>
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WeatherForecast",
-    "name": "Prakiraan Cuaca Medan Terkini",
-    "url": "https://cuacaindo-terkini.netlify.app/medan",
-    "description": "Informasi prakiraan cuaca Kota Medan hari ini secara real-time, akurat, langsung dari data satelit.",
-    "provider": {
-      "@type": "Organization",
-      "name": "CuacaIndo",
-      "url": "https://cuacaindo-terkini.netlify.app/"
-    }
-  }
-  </script>
 </head>
 <body class="text-white antialiased flex flex-col justify-between min-h-screen">
 
@@ -95,7 +80,6 @@
   </footer>
 
   <script>
-    // FIXED: Using your active OpenWeather API Key
     const API_KEY = '82be2db14f9b737940ac1a0e8f3c93a7';
 
     function getIcon(code, iconStr) {
@@ -123,12 +107,10 @@
 
     async function fetchMedan() {
       try {
-        // FIXED syntax: changed 'id&appid=' to 'q=Medan,id&appid='
         const r = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Medan,id&appid=${API_KEY}&units=metric&lang=id`);
         if(!r.ok) return;
         const d = await r.json();
 
-        // Safely map incoming live parameters directly onto correct component targets
         if(document.getElementById('mdn-icon')) document.getElementById('mdn-icon').textContent = getIcon(d.weather[0].id, d.weather[0].icon);
         if(document.getElementById('mdn-temp')) document.getElementById('mdn-temp').textContent = Math.round(d.main.temp) + '°C';
         if(document.getElementById('mdn-desc')) document.getElementById('mdn-desc').textContent = descID(d.weather[0].description);
@@ -141,7 +123,6 @@
       }
     }
 
-    // Execute engine when elements are loaded safely
     window.addEventListener('DOMContentLoaded', fetchMedan);
   </script>
 </body>
