@@ -1,179 +1,139 @@
+<!-- Copy of jakarta.html with CITY_NAME = "Bandung" and CITY_ID = "1649082" -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cuaca Bandung Hari Ini & Prakiraan Terkini</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Prakiraan Cuaca Bandung - CuacaIndo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'DM Sans', sans-serif; background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); min-height: 100vh; }
-    .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+    :root { --sky: #0a1628; --teal: #00c9b1; --teal2: #00e5cc; --gold: #f5c842; --white: #f0f6ff; --muted: #7a9cc0; --card: rgba(255,255,255,0.05); --card-border: rgba(0,201,177,0.2); }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'DM Sans',sans-serif; background:var(--sky); color:var(--white); min-height:100vh; overflow-x:hidden; transition: background 1s ease; }
+    #weather-effects { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .bg-orbs { position:fixed; inset:0; z-index:0; pointer-events:none; }
+    .orb { position:absolute; border-radius:50%; filter:blur(80px); opacity:0.15; animation:drift 18s infinite alternate; }
+    .orb1 { width:600px; height:600px; background:var(--teal); top:-200px; left:-150px; }
+    @keyframes drift { from{transform:translate(0,0)} to{transform:translate(40px,30px)} }
+    .drop { position: absolute; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.6)); width: 2px; height: 80px; bottom: 100%; animation: rain linear infinite; }
+    @keyframes rain { 0% { transform: translateY(0); } 100% { transform: translateY(120vh); } }
+    .sun-flare { position: absolute; top: -100px; left: -100px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0) 70%); border-radius: 50%; animation: pulse 4s infinite alternate; }
+    @keyframes pulse { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(1.1); opacity: 0.9; } }
+    .star { position: absolute; background: #fff; border-radius: 50%; animation: twinkle infinite alternate; }
+    @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 1; } }
+    .wrapper { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:20px; }
+    header { display:flex; justify-content:space-between; align-items:center; padding:20px 0; border-bottom:1px solid var(--card-border); }
+    .logo { font-family:'Playfair Display',serif; font-size:1.5rem; text-decoration:none; color:white; }
+    .logo span { color:var(--teal); }
+    .back-btn { text-decoration:none; color:var(--muted); font-size:0.9rem; transition:0.3s; }
+    .hero { text-align:center; padding:60px 0; }
+    .hero h1 { font-family:'Playfair Display',serif; font-size:3.5rem; margin-bottom:10px; }
+    .hero h1 span { color:var(--teal); }
+    .clock-container { background:rgba(0,0,0,0.3); padding:10px 20px; border-radius:50px; display:inline-flex; align-items:center; gap:15px; margin-bottom:20px; border:1px solid var(--card-border); }
+    #live-clock { font-weight:700; color:var(--teal); font-size:1.1rem; }
+    .main-card { background:linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border:1px solid var(--card-border); border-radius:30px; padding:40px; backdrop-filter:blur(15px); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; }
+    .temp-large { font-size:6rem; font-weight:300; background:linear-gradient(to bottom, #fff, var(--teal)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .big-icon { font-size:7rem; }
+    .stats-row { display:grid; grid-template-columns: repeat(3, 1fr); gap:15px; margin-top:30px; }
+    .stat-item { background:rgba(255,255,255,0.03); border:1px solid var(--card-border); border-radius:20px; padding:20px; text-align:center; }
+    .stat-item .val { font-size:1.4rem; font-weight:600; color:var(--teal2); display:block; }
+    .share-section { margin-top:40px; text-align:center; }
+    .share-btns { display:flex; justify-content:center; gap:15px; }
+    .share-btn { padding:12px 25px; border-radius:50px; text-decoration:none; font-weight:600; font-size:0.9rem; transition:0.3s; cursor: pointer; }
+    .wa { background:#25D366; color:white; }
+    .tw { background:#000; color:white; border:1px solid #333; }
   </style>
 </head>
-<body class="text-white antialiased flex flex-col justify-between min-h-screen">
-
-  <nav class="max-w-6xl w-full mx-auto px-6 py-6 flex justify-between items-center">
-    <div class="flex items-center space-x-2">
-      <span class="text-2xl font-bold tracking-tight">Cuaca<span class="text-[#00c9b1]">Indo</span></span>
+<body>
+<div id="weather-effects"></div>
+<div class="bg-orbs"><div class="orb orb1"></div></div>
+<div class="wrapper">
+  <header><a href="index.html" class="logo">Cuaca<span>Indo</span></a><a href="index.html" class="back-btn">← Kembali</a></header>
+  <div class="hero">
+    <div class="clock-container"><span id="live-clock">00:00:00</span><span id="live-date" style="color:var(--muted); font-size:0.8rem;">...</span></div>
+    <h1 id="city-title">Cuaca <span>Bandung</span></h1>
+  </div>
+  <div class="main-card">
+    <div class="weather-info">
+        <h2 id="display-name">Bandung, Indonesia</h2>
+        <div class="desc" id="weather-desc" style="color:var(--teal);">Memuat data...</div>
+        <div class="temp-large" id="main-temp">--°C</div>
     </div>
-    <div class="flex items-center space-x-2 bg-white/5 p-1 rounded-xl border border-white/10">
-      <button id="btn-celsius" onclick="toggleUnit('C')" class="px-3 py-1 text-xs font-bold rounded-lg bg-[#00c9b1] text-[#0f2027] transition">°C</button>
-      <button id="btn-fahrenheit" onclick="toggleUnit('F')" class="px-3 py-1 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition">°F</button>
+    <div class="big-icon" id="main-icon">⛅</div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-item"><span class="val" id="stat-hum">--%</span><span style="font-size:0.7rem; color:var(--muted);">KELEMBABAN</span></div>
+    <div class="stat-item"><span class="val" id="stat-wind">-- km/j</span><span style="font-size:0.7rem; color:var(--muted);">ANGIN</span></div>
+    <div class="stat-item"><span class="val" id="stat-feels">--°C</span><span style="font-size:0.7rem; color:var(--muted);">TERASA</span></div>
+  </div>
+  <div class="share-section">
+    <div style="margin-bottom:15px; color:var(--muted);">Bagikan info ini:</div>
+    <div class="share-btns">
+        <a id="share-wa" class="share-btn wa" target="_blank">WhatsApp</a>
+        <a id="share-tw" class="share-btn tw" target="_blank">Twitter (X)</a>
     </div>
-    <a href="/" class="text-sm font-medium text-gray-400 hover:text-[#00c9b1] transition flex items-center space-x-1">
-      <span>⬅ Kembali ke Beranda</span>
-    </a>
-  </nav>
-
-  <main class="max-w-4xl w-full mx-auto px-4 flex-grow flex flex-col justify-center items-center py-6">
-    <div class="text-center mb-6">
-      <h1 class="text-4xl md:text-5xl font-bold mb-2">Cuaca <span class="text-[#00c9b1]">Bandung</span></h1>
-      <p class="text-gray-400 text-xs md:text-sm">Prakiraan cuaca real-time dan ramalan beberapa hari ke depan langsung dari satelit</p>
-    </div>
-
-    <div class="glass-card w-full max-w-2xl rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden mb-6">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-6">
-        <div>
-          <h2 class="text-2xl font-bold mb-1">Bandung, Jawa Barat</h2>
-          <p id="city-desc" class="text-[#00c9b1] text-md font-medium tracking-wide">Memuat Data...</p>
-        </div>
-        <div class="flex items-center space-x-4">
-          <div id="city-icon" class="text-5xl md:text-6xl filter drop-shadow-md">☁️</div>
-          <div id="city-temp" class="text-5xl md:text-6xl font-bold tracking-tighter">--°C</div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-3 gap-3 border-t border-gray-800/60 pt-4">
-        <div class="bg-white/5 rounded-xl p-3 text-center">
-          <span id="city-humidity" class="text-lg font-bold text-[#00c9b1] block">--%</span>
-          <p class="text-gray-400 text-[10px] mt-0.5">💧 Kelembaban</p>
-        </div>
-        <div class="bg-white/5 rounded-xl p-3 text-center">
-          <span id="city-wind" class="text-lg font-bold text-[#00c9b1] block">-- km/j</span>
-          <p class="text-gray-400 text-[10px] mt-0.5">💨 Angin</p>
-        </div>
-        <div class="bg-white/5 rounded-xl p-3 text-center">
-          <span id="city-feels" class="text-lg font-bold text-[#00c9b1] block">--°C</span>
-          <p class="text-gray-400 text-[10px] mt-0.5">🌡️ Terasa</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="w-full max-w-2xl text-left mb-3 pl-2">
-      <h3 class="text-lg font-bold text-gray-300">Prakiraan 5 Hari Ke Depan</h3>
-    </div>
-
-    <div id="forecast-container" class="grid grid-cols-2 sm:grid-cols-5 gap-3 w-full max-w-2xl">
-      <div class="glass-card rounded-2xl p-4 text-center text-gray-500 text-xs col-span-full">Memuat ramalan...</div>
-    </div>
-  </main>
-
-  <footer class="w-full text-center py-4 border-t border-gray-900/40 bg-black/10">
-    <p class="text-[10px] text-gray-500">&copy; 2026 <strong>CuacaIndo</strong> – Data Akurat Terkini</p>
-  </footer>
-
-  <script>
-    const API_KEY = '82be2db14f9b737940ac1a0e8f3c93a7';
-    let currentUnit = 'C'; 
-    let cachedWeatherData = null;
-    let cachedForecastData = null;
-
-    function getIcon(code) {
-      if(!code) return '☁️';
-      const c = String(code);
-      if(c.startsWith('2')) return '⛈️';
-      if(c.startsWith('3') || c.startsWith('5')) return '🌧️';
-      if(c.startsWith('6')) return '❄️';
-      if(c.startsWith('7')) return '🌫️';
-      if(c === '800') return '☀️';
-      return '☁️';
-    }
-
-    // Translation function
-    function descID(desc) {
-      const map = {
-        'clear sky': 'Cerah', 'few clouds': 'Berawan Sebagian',
-        'scattered clouds': 'Berawan', 'broken clouds': 'Berawan Tebal',
-        'overcast clouds': 'Mendung', 'light rain': 'Hujan Ringan',
-        'moderate rain': 'Hujan Sedang', 'heavy intensity rain': 'Hujan Lebat',
-        'mist': 'Berkabut', 'thunderstorm': 'Badai Petir'
-      };
-      return map[desc.toLowerCase()] || desc;
-    }
-
-    function convertTemp(celsiusVal) {
-      if (currentUnit === 'F') return Math.round((celsiusVal * 9/5) + 32) + '°F';
-      return Math.round(celsiusVal) + '°C';
-    }
-
-    function toggleUnit(unit) {
-      if (currentUnit === unit) return;
-      currentUnit = unit;
-      const btnC = document.getElementById('btn-celsius');
-      const btnF = document.getElementById('btn-fahrenheit');
-      if(unit === 'C') {
-        btnC.className = "px-3 py-1 text-xs font-bold rounded-lg bg-[#00c9b1] text-[#0f2027] transition";
-        btnF.className = "px-3 py-1 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition";
-      } else {
-        btnF.className = "px-3 py-1 text-xs font-bold rounded-lg bg-[#00c9b1] text-[#0f2027] transition";
-        btnC.className = "px-3 py-1 text-xs font-bold rounded-lg text-gray-400 hover:text-white transition";
+  </div>
+</div>
+<script>
+  const CITY_NAME = "Bandung";
+  const CITY_ID = "1649082";
+  const API_KEY = "82be2db14f9b737940ac1a0e8f3c93a7";
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('live-clock').textContent = now.toLocaleTimeString('id-ID', { hour12: false }) + " WIB";
+    document.getElementById('live-date').textContent = "| " + now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
+  }
+  setInterval(updateClock, 1000); updateClock();
+  function applyEffects(id, icon) {
+    const container = document.getElementById('weather-effects');
+    container.innerHTML = '';
+    const isNight = icon.includes('n');
+    if (id >= 200 && id < 600) {
+      for (let i = 0; i < 40; i++) {
+        let d = document.createElement('div'); d.className = 'drop'; d.style.left = Math.random() * 100 + 'vw';
+        d.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's'; d.style.animationDelay = Math.random() * 2 + 's';
+        container.appendChild(d);
       }
-      renderLiveUI();
-      renderForecastUI();
-    }
-
-    function renderLiveUI() {
-      if(!cachedWeatherData) return;
-      document.getElementById('city-temp').textContent = convertTemp(cachedWeatherData.main.temp);
-      document.getElementById('city-feels').textContent = convertTemp(cachedWeatherData.main.feels_like);
-    }
-
-    // Multi-day template builder engine
-    function renderForecastUI() {
-      if(!cachedForecastData) return;
-      const container = document.getElementById('forecast-container');
-      container.innerHTML = '';
-      const dailyElements = cachedForecastData.list.filter((item, index) => index % 8 === 0).slice(0, 5);
-
-      dailyElements.forEach(dayData => {
-        const dateObj = new Date(dayData.dt * 1000);
-        const options = { weekday: 'short', day: 'numeric', month: 'short' };
-        const localDateLabel = dateObj.toLocaleDateString('id-ID', options);
-
-        const card = document.createElement('div');
-        card.className = "glass-card rounded-2xl p-4 text-center flex flex-col justify-between items-center shadow-lg transition hover:scale-[1.02]";
-        card.innerHTML = `
-          <p class="text-gray-400 text-xs font-medium">${localDateLabel}</p>
-          <div class="text-3xl my-2 filter drop-shadow-sm">${getIcon(dayData.weather[0].id)}</div>
-          <p class="text-white text-base font-bold tracking-tight">${convertTemp(dayData.main.temp)}</p>
-          <p class="text-gray-500 text-[10px] truncate max-w-full mt-1">${descID(dayData.weather[0].description)}</p>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    async function fetchWeatherDataEngine() {
-      try {
-        const liveRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Bandung,id&appid=${API_KEY}&units=metric&lang=id`);
-        if(liveRes.ok) {
-          cachedWeatherData = await liveRes.json();
-          document.getElementById('city-icon').textContent = getIcon(cachedWeatherData.weather[0].id);
-          document.getElementById('city-desc').textContent = descID(cachedWeatherData.weather[0].description);
-          document.getElementById('city-humidity').textContent = cachedWeatherData.main.humidity + '%';
-          document.getElementById('city-wind').textContent = Math.round(cachedWeatherData.wind.speed * 3.6) + ' km/j';
-          renderLiveUI();
+    } else if (id === 800 && !isNight) {
+      let s = document.createElement('div'); s.className = 'sun-flare'; container.appendChild(s);
+    } else if (isNight) {
+        for (let i = 0; i < 50; i++) {
+            let star = document.createElement('div'); star.className = 'star';
+            star.style.width = star.style.height = Math.random() * 2 + 'px';
+            star.style.left = Math.random() * 100 + 'vw'; star.style.top = Math.random() * 100 + 'vh';
+            star.style.animationDuration = (Math.random() * 3 + 1) + 's'; container.appendChild(star);
         }
-        const forecastRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=Bandung,id&appid=${API_KEY}&units=metric&lang=id`);
-        if(forecastRes.ok) {
-          cachedForecastData = await forecastRes.json();
-          renderForecastUI();
-        }
-      } catch(e) { console.error(e); }
     }
-    window.addEventListener('DOMContentLoaded', fetchWeatherDataEngine);
-  </script>
+  }
+  function getEmoji(id, icon) {
+    if (id >= 200 && id < 300) return "⛈️";
+    if (id >= 300 && id < 600) return "🌧️";
+    if (id === 800) return icon.includes('n') ? "🌙" : "☀️";
+    return "⛅";
+  }
+  async function getWeatherData() {
+    try {
+      const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?id=${CITY_ID}&appid=${API_KEY}&units=metric&lang=id`);
+      const data = await res.json();
+      if(data.main) {
+        const temp = Math.round(data.main.temp);
+        const desc = data.weather[0].description;
+        document.getElementById('main-temp').textContent = temp + "°C";
+        document.getElementById('weather-desc').textContent = desc;
+        document.getElementById('main-icon').textContent = getEmoji(data.weather[0].id, data.weather[0].icon);
+        document.getElementById('stat-hum').textContent = data.main.humidity + "%";
+        document.getElementById('stat-wind').textContent = Math.round(data.wind.speed * 3.6) + " km/j";
+        document.getElementById('stat-feels').textContent = Math.round(data.main.feels_like) + "°C";
+        const shareText = `Cuaca di ${CITY_NAME} saat ini ${desc} (${temp}°C). Cek di CuacaIndo!`;
+        const currentUrl = window.location.href;
+        document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + " " + currentUrl)}`;
+        document.getElementById('share-tw').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(currentUrl)}`;
+        applyEffects(data.weather[0].id, data.weather[0].icon);
+      }
+    } catch (e) { document.getElementById('weather-desc').textContent = "Error loading data."; }
+  }
+  getWeatherData();
+</script>
 </body>
 </html>
