@@ -1,5 +1,4 @@
-
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta name="google-site-verification" content="3pPVFYIT2lG94-KYpLg-Y9y0SgXbZf68J8vB5W2vA_U" />
@@ -90,11 +89,15 @@
     .section-title { font-family:'Playfair Display',serif; font-size:1.4rem; margin:36px 0 18px; display:flex; align-items:center; gap:12px; }
     .section-title::after { content:''; flex:1; height:1px; background:linear-gradient(to right,var(--card-border),transparent); }
     .city-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; margin-bottom:36px; }
+    
+    /* Added display: block to make standard anchor links function cleanly inside grid */
+    .city-link-wrapper { display: block; text-decoration: none; color: inherit; }
     .city-card { background:var(--card); border:1px solid var(--card-border); border-radius:18px; padding:22px; cursor:pointer; transition:transform 0.25s,border-color 0.25s,box-shadow 0.25s; animation:fadeUp 0.5s ease forwards; }
     .city-card:hover { transform:translateY(-4px); border-color:var(--teal); box-shadow:0 12px 32px rgba(0,201,177,0.15); }
     .city-icon { font-size:2.2rem; margin-bottom:10px; }
     .city-name { font-size:1rem; font-weight:500; margin-bottom:4px; }
     .city-temp { font-size:1.7rem; font-weight:300; color:var(--teal2); }
+    .city-grid a { text-decoration: none; color: inherit; }
     .city-desc { font-size:0.75rem; color:var(--muted); margin-top:4px; }
     
     .tips-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; margin-bottom:36px; }
@@ -157,7 +160,7 @@
         </select>
     </div>
     
-    <div class="error-msg" id="error-msg">Kota tidak ditemukan. Coba nama kota lain.</div>
+    <div class="error-msg" id="error-msg">Kota tidak ditemukan. Coba nama kota lian.</div>
   </div>
 
   <div id="main-weather">
@@ -198,11 +201,16 @@
 <script>
   const API_KEY = '82be2db14f9b737940ac1a0e8f3c93a7';
 
+  // Added targetUrl to map the 5 specific city pages smoothly
   const CITIES = [
-    {name:'Jakarta',   id:1642911},{name:'Surabaya', id:1625822},
-    {name:'Bali',      id:1650218},{name:'Medan',    id:1214520},
-    {name:'Bandung',   id:1649082},{name:'Makassar', id:1622786},
-    {name:'Yogyakarta',id:1624304},{name:'Semarang', id:1627896},
+    {name:'Jakarta',   id:1642911, targetUrl: 'jakarta.html'},
+    {name:'Surabaya', id:1625822, targetUrl: 'surabaya.html'},
+    {name:'Bali',      id:1650218, targetUrl: 'bali.html'},
+    {name:'Medan',    id:1214520, targetUrl: 'medan.html'},
+    {name:'Bandung',   id:1649082, targetUrl: 'bandung.html'},
+    {name:'Makassar', id:1622786},
+    {name:'Yogyakarta',id:1624304},
+    {name:'Semarang', id:1627896},
   ];
 
   function getIcon(code, iconStr){
@@ -351,19 +359,36 @@
   function buildGrid(){
     const grid=document.getElementById('city-grid');
     CITIES.forEach((city,i)=>{
-      const card=document.createElement('div');
-      card.className='city-card';
-      card.style.animationDelay=(i*0.07)+'s';
-      card.innerHTML=`<div class="city-icon">🌤️</div><div class="city-name">${city.name}</div><div class="city-temp" id="t-${city.id}">Memuat...</div><div class="city-desc" id="d-${city.id}"></div>`;
-      card.onclick=()=>{
-          document.getElementById('search-input').value=city.name; 
-          document.getElementById('city-dropdown').value='';
-          fetchById(city.id).then(d=>d&&showMain(d));
-      };
-      grid.appendChild(card);
+      // If targetUrl exists, wrap card inside standard anchor link, otherwise create standalone card click action
+      if (city.targetUrl) {
+          const linkWrapper = document.createElement('a');
+          linkWrapper.href = city.targetUrl;
+          linkWrapper.className = 'city-link-wrapper';
+          
+          const card = document.createElement('div');
+          card.className = 'city-card';
+          card.style.animationDelay = (i * 0.07) + 's';
+          card.innerHTML = `<div class="city-icon">🌤️</div><div class="city-name">${city.name}</div><div class="city-temp" id="t-${city.id}">Memuat...</div><div class="city-desc" id="d-${city.id}"></div>`;
+          
+          linkWrapper.appendChild(card);
+          grid.appendChild(linkWrapper);
+      } else {
+          const card = document.createElement('div');
+          card.className = 'city-card';
+          card.style.animationDelay = (i * 0.07) + 's';
+          card.innerHTML = `<div class="city-icon">🌤️</div><div class="city-name">${city.name}</div><div class="city-temp" id="t-${city.id}">Memuat...</div><div class="city-desc" id="d-${city.id}"></div>`;
+          card.onclick = () => {
+              document.getElementById('search-input').value = city.name; 
+              document.getElementById('city-dropdown').value = '';
+              fetchById(city.id).then(d => d && showMain(d));
+          };
+          grid.appendChild(card);
+      }
+
       fetchById(city.id).then(d=>{
         if(!d || !d.main)return;
-        card.querySelector('.city-icon').textContent=getIcon(d.weather[0].id, d.weather[0].icon);
+        const targetCard = document.getElementById('t-'+city.id).closest('.city-card');
+        targetCard.querySelector('.city-icon').textContent=getIcon(d.weather[0].id, d.weather[0].icon);
         document.getElementById('t-'+city.id).textContent=Math.round(d.main.temp)+'°C';
         document.getElementById('d-'+city.id).textContent=descID(d.weather[0].description);
       });
