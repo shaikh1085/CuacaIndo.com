@@ -2,153 +2,373 @@
 <html lang="id">
 <head>
   <meta name="google-site-verification" content="3pPVFYIT2lG94-KYpLg-Y9y0SgXbZf68J8vB5W2vA_U" />
+  <meta name="monetag" content="93ac63f4b4288fac61931aa704d1c102">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Prakiraan Cuaca - CuacaIndo</title>
+  <title>CuacaIndo – Informasi Cuaca Indonesia Terkini</title>
+  <meta name="description" content="Cek cuaca terkini di seluruh kota Indonesia. Prakiraan cuaca akurat untuk Jakarta, Surabaya, Bali, Medan, Bandung dan kota lainnya."/>
+  <meta name="keywords" content="cuaca indonesia, prakiraan cuaca, cuaca hari ini, cuaca jakarta, cuaca bali, cuaca surabaya"/>
+  <meta name="google-site-verification" content="lDkeLgJ6gZ99UYpsG2w_Vr89mM_IDTf9K4AciHzUC0E" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     :root {
       --sky: #0a1628; --teal: #00c9b1; --teal2: #00e5cc;
-      --gold: #f5c842; --white: #f0f6ff; --muted: #7a9cc0;
-      --card: rgba(255,255,255,0.05); --card-border: rgba(0,201,177,0.2);
+      --gold: #f5c842; --coral: #ff6b4a; --white: #f0f6ff;
+      --muted: #7a9cc0; --card: rgba(255,255,255,0.05);
+      --card-border: rgba(0,201,177,0.2);
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:'DM Sans',sans-serif; background:var(--sky); color:var(--white); min-height:100vh; overflow-x:hidden; transition: background 1s ease; }
     
-    #weather-effects { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    /* Night Mode Theme */
+    body.night-mode { background: #020813; }
+    body.night-mode .orb1 { background: #1a1a2e; }
+    body.night-mode .orb3 { background: #0f3460; }
+
     .bg-orbs { position:fixed; inset:0; z-index:0; pointer-events:none; }
-    .orb { position:absolute; border-radius:50%; filter:blur(80px); opacity:0.15; animation:drift 18s infinite alternate; }
-    .orb1 { width:600px; height:600px; background:var(--teal); top:-200px; left:-150px; }
-    @keyframes drift { from{transform:translate(0,0)} to{transform:translate(40px,30px)} }
+    .orb { position:absolute; border-radius:50%; filter:blur(80px); opacity:0.18; animation:drift 18s ease-in-out infinite alternate; transition: background 1s ease;}
+    .orb1 { width:600px; height:600px; background:#00c9b1; top:-200px; left:-150px; }
+    .orb2 { width:500px; height:500px; background:#1a5fa8; bottom:-150px; right:-100px; animation-delay:-6s; }
+    .orb3 { width:300px; height:300px; background:#f5c842; top:40%; left:50%; animation-delay:-12s; }
+    @keyframes drift { from{transform:translate(0,0) scale(1)} to{transform:translate(40px,30px) scale(1.1)} }
+    
+    /* WEATHER EFFECTS CSS */
+    #weather-effects { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    
+    /* Rain Drops */
+    .drop { position: absolute; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.7)); width: 2px; height: 80px; bottom: 100%; animation: rain linear infinite; }
+    @keyframes rain { 0% { transform: translateY(0); } 100% { transform: translateY(120vh); } }
+    
+    /* Sun Flare */
+    .sun-flare { position: absolute; top: -150px; left: -150px; width: 800px; height: 800px; background: radial-gradient(circle, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0) 60%); border-radius: 50%; animation: pulse 4s infinite alternate; filter: blur(50px); }
+    @keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.1); opacity: 1; } }
+    
+    /* Stars */
+    .star { position: absolute; background: #fff; border-radius: 50%; animation: twinkle infinite alternate; }
+    @keyframes twinkle { 0% { opacity: 0.1; box-shadow: 0 0 0px #fff; } 100% { opacity: 1; box-shadow: 0 0 5px #fff; } }
 
-    .wrapper { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:20px; }
-    header { display:flex; justify-content:space-between; align-items:center; padding:20px 0; border-bottom:1px solid var(--card-border); }
-    .logo { font-family:'Playfair Display',serif; font-size:1.5rem; text-decoration:none; color:white; }
+    .wrapper { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:0 20px; }
+    header { padding:28px 0 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); }
+    .logo { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:900; }
     .logo span { color:var(--teal); }
-    .back-btn { text-decoration:none; color:var(--muted); font-size:0.9rem; transition:0.3s; }
-    .back-btn:hover { color:var(--teal); }
-
-    .hero { text-align:center; padding:60px 0; }
-    .hero h1 { font-family:'Playfair Display',serif; font-size:3.5rem; margin-bottom:10px; }
-    .hero h1 span { color:var(--teal); }
-
-    .clock-container { background:rgba(0,0,0,0.3); padding:10px 20px; border-radius:50px; display:inline-flex; align-items:center; gap:15px; margin-bottom:20px; border:1px solid var(--card-border); }
-    #live-clock { font-weight:700; color:var(--teal); font-size:1.1rem; }
-
-    .main-card { background:linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border:1px solid var(--card-border); border-radius:30px; padding:40px; backdrop-filter:blur(15px); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; }
-    .temp-large { font-size:6rem; font-weight:300; background:linear-gradient(to bottom, #fff, var(--teal)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    .big-icon { font-size:7rem; }
-
-    .stats-row { display:grid; grid-template-columns: repeat(3, 1fr); gap:15px; margin-top:30px; }
-    .stat-item { background:rgba(255,255,255,0.03); border:1px solid var(--card-border); border-radius:20px; padding:20px; text-align:center; }
-    .stat-item .val { font-size:1.4rem; font-weight:600; color:var(--teal2); display:block; }
-
-    .share-section { margin-top:40px; text-align:center; }
-    .share-btns { display:flex; justify-content:center; gap:15px; }
-    .share-btn { padding:12px 25px; border-radius:50px; text-decoration:none; font-weight:600; font-size:0.9rem; transition:0.3s; cursor: pointer; }
-    .wa { background:#25D366; color:white; }
-    .tw { background:#000; color:white; border:1px solid #333; }
-    .share-btn:hover { transform:scale(1.05); }
-
-    @media (max-width: 600px) {
-        .main-card { flex-direction:column; text-align:center; }
-        .temp-large { font-size:4rem; }
-    }
+    .logo small { display:block; font-family:'DM Sans',sans-serif; font-size:0.6rem; letter-spacing:4px; color:var(--muted); text-transform:uppercase; margin-top:2px; }
+    .header-time { text-align:right; font-size:0.78rem; color:var(--muted); }
+    .header-time #clock { font-size:1.4rem; font-weight:500; color:var(--white); display:block; margin-bottom:2px; }
+    
+    .search-section { padding:30px 0 10px; text-align:center; }
+    .search-section h1 { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,5vw,3rem); font-weight:700; line-height:1.1; margin-bottom:8px; }
+    .search-section h1 em { color:var(--teal); font-style:normal; }
+    .search-section p { color:var(--muted); font-size:0.9rem; margin-bottom:24px; }
+    
+    /* Updated Search Bar */
+    .search-box { display:flex; gap:10px; max-width:520px; margin:0 auto; }
+    .search-box input { flex:1; padding:14px 20px; background:#ffffff; border:2px solid var(--card-border); border-radius:50px; color:#000000; font-family:'DM Sans',sans-serif; font-size:0.95rem; outline:none; transition:border 0.3s; }
+    .search-box input::placeholder { color:#666666; }
+    .search-box input:focus { border-color:var(--teal); box-shadow:0 0 15px rgba(0,201,177,0.3); }
+    .search-box button { padding:14px 28px; background:linear-gradient(135deg,var(--teal),var(--teal2)); border:none; border-radius:50px; color:#0a1628; font-weight:700; font-family:'DM Sans',sans-serif; font-size:0.9rem; cursor:pointer; transition:transform 0.2s,box-shadow 0.2s; }
+    .search-box button:hover { transform:scale(1.04); box-shadow:0 6px 24px rgba(0,201,177,0.4); }
+    
+    /* Dropdown UI */
+    .dropdown-container { max-width:520px; margin:15px auto 0; text-align:left; }
+    select.city-dropdown { width:100%; padding:12px 20px; border-radius:50px; background:#ffffff; color:#000000; border:2px solid var(--card-border); font-family:'DM Sans',sans-serif; font-size:0.9rem; outline:none; cursor:pointer; }
+    
+    #main-weather { margin:30px 0; display:none; }
+    .main-card { background:linear-gradient(135deg,rgba(0,201,177,0.12),rgba(26,95,168,0.15)); border:1px solid var(--card-border); border-radius:24px; padding:36px; display:flex; gap:30px; align-items:center; flex-wrap:wrap; backdrop-filter:blur(10px); animation:fadeUp 0.5s ease forwards; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .main-icon { font-size:5rem; line-height:1; }
+    .main-city { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:700; }
+    .main-country { color:var(--teal); font-size:0.85rem; letter-spacing:2px; }
+    .main-temp { font-size:4.5rem; font-weight:300; line-height:1; margin:8px 0; background:linear-gradient(135deg,var(--white),var(--teal)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .main-desc { color:var(--muted); font-size:1rem; text-transform:capitalize; }
+    .main-stats { display:flex; gap:20px; margin-top:16px; flex-wrap:wrap; }
+    .stat { background:rgba(255,255,255,0.05); border-radius:12px; padding:10px 16px; text-align:center; }
+    .stat-val { font-size:1.1rem; font-weight:500; color:var(--gold); }
+    .stat-label { font-size:0.72rem; color:var(--muted); margin-top:2px; }
+    
+    .section-title { font-family:'Playfair Display',serif; font-size:1.4rem; margin:36px 0 18px; display:flex; align-items:center; gap:12px; }
+    .section-title::after { content:''; flex:1; height:1px; background:linear-gradient(to right,var(--card-border),transparent); }
+    .city-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; margin-bottom:36px; }
+    .city-card { background:var(--card); border:1px solid var(--card-border); border-radius:18px; padding:22px; cursor:pointer; transition:transform 0.25s,border-color 0.25s,box-shadow 0.25s; animation:fadeUp 0.5s ease forwards; }
+    .city-card:hover { transform:translateY(-4px); border-color:var(--teal); box-shadow:0 12px 32px rgba(0,201,177,0.15); }
+    .city-icon { font-size:2.2rem; margin-bottom:10px; }
+    .city-name { font-size:1rem; font-weight:500; margin-bottom:4px; }
+    .city-temp { font-size:1.7rem; font-weight:300; color:var(--teal2); }
+    .city-desc { font-size:0.75rem; color:var(--muted); margin-top:4px; }
+    
+    .tips-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; margin-bottom:36px; }
+    .tip-card { background:rgba(245,200,66,0.06); border:1px solid rgba(245,200,66,0.15); border-radius:14px; padding:18px; }
+    .tip-card h3 { font-size:0.9rem; margin-bottom:6px; color:var(--gold); }
+    .tip-card p { font-size:0.8rem; color:var(--muted); line-height:1.6; }
+    
+    footer { border-top:1px solid var(--card-border); padding:24px 0; text-align:center; color:var(--muted); font-size:0.8rem; margin-top: 40px; }
+    footer strong { color:var(--teal); }
+    .error-msg { background:rgba(255,107,74,0.1); border:1px solid rgba(255,107,74,0.3); border-radius:12px; padding:16px; color:var(--coral); text-align:center; margin:10px auto; max-width: 520px; display:none; }
+    
+    @media(max-width:600px) { .main-card{flex-direction:column;padding:24px} .main-temp{font-size:3.5rem} .search-box{flex-direction:column} }
   </style>
 </head>
 <body>
 
 <div id="weather-effects"></div>
-<div class="bg-orbs"><div class="orb orb1"></div></div>
+
+<div class="bg-orbs">
+  <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+</div>
 
 <div class="wrapper">
   <header>
-    <a href="index.html" class="logo">Cuaca<span>Indo</span></a>
-    <a href="index.html" class="back-btn">← Kembali</a>
+    <div class="logo">Cuaca<span>Indo</span><small>Informasi Cuaca Indonesia</small></div>
+    <div class="header-time">
+        <span style="font-size:0.7rem; color:var(--teal);">Waktu Indonesia (WIB)</span>
+        <span id="clock"></span>
+        <span id="date-display"></span>
+    </div>
   </header>
-
-  <div class="hero">
-    <div class="clock-container">
-        <span id="live-clock">00:00:00</span>
-        <span id="live-date" style="color:var(--muted); font-size:0.8rem;">...</span>
+  
+  <div class="search-section">
+    <h1>Cuaca <em>Terkini</em><br>Seluruh Indonesia</h1>
+    <p>Masukkan nama kota atau pilih dari daftar</p>
+    
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="Cari kota... (contoh: Yogyakarta)"/>
+      <button onclick="searchCity()">🔍 Cari</button>
     </div>
-    <h1 id="city-title">Cuaca <span>Bali</span></h1>
-  </div>
-
-  <div class="main-card">
-    <div class="weather-info">
-        <h2 id="display-name">Bali, Indonesia</h2>
-        <div class="desc" id="weather-desc" style="color:var(--teal);">Memuat data...</div>
-        <div class="temp-large" id="main-temp">--°C</div>
+    
+    <div class="dropdown-container">
+        <select id="city-dropdown" class="city-dropdown" onchange="dropdownSearch()">
+            <option value="">-- Atau Pilih Kota Besar --</option>
+            <option value="Jakarta">Jakarta</option>
+            <option value="Surabaya">Surabaya</option>
+            <option value="Bandung">Bandung</option>
+            <option value="Medan">Medan</option>
+            <option value="Semarang">Semarang</option>
+            <option value="Makassar">Makassar</option>
+            <option value="Palembang">Palembang</option>
+            <option value="Bali">Bali (Denpasar)</option>
+            <option value="Yogyakarta">Yogyakarta</option>
+            <option value="Batam">Batam</option>
+            <option value="Malang">Malang</option>
+            <option value="Pekanbaru">Pekanbaru</option>
+            <option value="Balikpapan">Balikpapan</option>
+            <option value="Samarinda">Samarinda</option>
+            <option value="Banjarmasin">Banjarmasin</option>
+        </select>
     </div>
-    <div class="big-icon" id="main-icon">⛅</div>
+    
+    <div class="error-msg" id="error-msg">Kota tidak ditemukan. Coba nama kota lain.</div>
   </div>
 
-  <div class="stats-row">
-    <div class="stat-item"><span class="val" id="stat-hum">--%</span><span style="font-size:0.7rem; color:var(--muted);">KELEMBABAN</span></div>
-    <div class="stat-item"><span class="val" id="stat-wind">-- km/j</span><span style="font-size:0.7rem; color:var(--muted);">ANGIN</span></div>
-    <div class="stat-item"><span class="val" id="stat-feels">--°C</span><span style="font-size:0.7rem; color:var(--muted);">TERASA</span></div>
-  </div>
-
-  <div class="share-section">
-    <div style="margin-bottom:15px; color:var(--muted);">Bagikan info ini:</div>
-    <div class="share-btns">
-        <a id="share-wa" class="share-btn wa" target="_blank">WhatsApp</a>
-        <a id="share-tw" class="share-btn tw" target="_blank">Twitter (X)</a>
+  <div id="main-weather">
+    <div class="main-card" id="m-card">
+      <div class="main-icon" id="m-icon">⛅</div>
+      <div class="main-info">
+        <div class="main-city" id="m-city">—</div>
+        <div class="main-country" id="m-country">Indonesia 🇮🇩</div>
+        <div class="main-temp" id="m-temp">—°C</div>
+        <div class="main-desc" id="m-desc">—</div>
+        <div class="main-stats">
+          <div class="stat"><div class="stat-val" id="m-humidity">—</div><div class="stat-label">💧 Kelembaban</div></div>
+          <div class="stat"><div class="stat-val" id="m-wind">—</div><div class="stat-label">💨 Angin</div></div>
+          <div class="stat"><div class="stat-val" id="m-feels">—</div><div class="stat-label">🌡️ Terasa</div></div>
+          <div class="stat"><div class="stat-val" id="m-vis">—</div><div class="stat-label">👁️ Jarak Pandang</div></div>
+        </div>
+      </div>
     </div>
   </div>
+
+  <div class="section-title">🏙️ Kota-Kota Utama Indonesia</div>
+  <div class="city-grid" id="city-grid"></div>
+
+  <div class="section-title">💡 Tips Cuaca</div>
+  <div class="tips-grid">
+    <div class="tip-card"><h3>☔ Musim Hujan (Okt–Mar)</h3><p>Selalu bawa payung atau jas hujan. Curah hujan tinggi terutama sore dan malam hari.</p></div>
+    <div class="tip-card"><h3>☀️ Musim Kemarau (Apr–Sep)</h3><p>Gunakan tabir surya dan minum air putih yang cukup. Suhu bisa mencapai 35°C.</p></div>
+    <div class="tip-card"><h3>🌊 Cuaca Pesisir</h3><p>Pantau prakiraan angin dan gelombang sebelum berlayar atau berenang di pantai.</p></div>
+    <div class="tip-card"><h3>🏔️ Cuaca Pegunungan</h3><p>Daerah Dieng, Bromo, Puncak bisa sangat dingin di malam hari. Bawa jaket tebal.</p></div>
+  </div>
+
+  <footer>
+    <p>© 2026 <strong>CuacaIndo</strong> — Data dari OpenWeatherMap</p>
+    <p style="margin-top:6px;">Jakarta · Surabaya · Bali · Medan · Bandung · Makassar</p>
+  </footer>
 </div>
 
 <script>
-  // CONFIGURATION
-  const CITY_NAME = "Bali";
-  const CITY_ID = "1650218"; 
-  const API_KEY = "82be2db14f9b737940ac1a0e8f3c93a7";
+  const API_KEY = '82be2db14f9b737940ac1a0e8f3c93a7';
 
-  function updateClock() {
-    const now = new Date();
-    const time = now.toLocaleTimeString('id-ID', { hour12: false });
-    const date = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
-    document.getElementById('live-clock').textContent = time + " WIB";
-    document.getElementById('live-date').textContent = "| " + date;
+  const CITIES = [
+    {name:'Jakarta',   id:1642911},{name:'Surabaya', id:1625822},
+    {name:'Bali',      id:1650218},{name:'Medan',    id:1214520},
+    {name:'Bandung',   id:1649082},{name:'Makassar', id:1622786},
+    {name:'Yogyakarta',id:1624304},{name:'Semarang', id:1627896},
+  ];
+
+  function getIcon(code, iconStr){
+    if(!code) return '⛅';
+    const c=String(code);
+    if(c.startsWith('2'))return'⛈️';
+    if(c.startsWith('3'))return'🌦️';
+    if(c.startsWith('5'))return'🌧️';
+    if(c.startsWith('6'))return'❄️';
+    if(c.startsWith('7'))return'🌫️';
+    if(c==='800'){
+        return (iconStr && iconStr.includes('n')) ? '🌙' : '☀️';
+    }
+    if(c.startsWith('8')){
+        return (iconStr && iconStr.includes('n')) ? '☁️' : '⛅';
+    }
+    return'🌤️';
   }
-  setInterval(updateClock, 1000);
+
+  function descID(desc){
+    const map={'clear sky':'Cerah','few clouds':'Sedikit Berawan','scattered clouds':'Berawan',
+      'broken clouds':'Berawan Banyak','shower rain':'Hujan Ringan','rain':'Hujan',
+      'thunderstorm':'Badai Petir','snow':'Salju','mist':'Berkabut','overcast clouds':'Mendung',
+      'light rain':'Hujan Ringan','moderate rain':'Hujan Sedang',
+      'heavy intensity rain':'Hujan Lebat','haze':'Kabut','fog':'Kabut Tebal'};
+    return map[desc.toLowerCase()]||desc;
+  }
+
+  // Live WIB Clock
+  function updateClock(){
+    const now = new Date();
+    const optionsTime = { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    const optionsDate = { timeZone: 'Asia/Jakarta', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    
+    document.getElementById('clock').textContent = new Intl.DateTimeFormat('id-ID', optionsTime).format(now);
+    document.getElementById('date-display').textContent = new Intl.DateTimeFormat('id-ID', optionsDate).format(now);
+  }
+  setInterval(updateClock, 1000); 
   updateClock();
 
-  async function getWeatherData() {
-    try {
-      const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?id=${CITY_ID}&appid=${API_KEY}&units=metric&lang=id`);
-      const data = await res.json();
-      
-      if(data.main) {
-        const temp = Math.round(data.main.temp);
-        const desc = data.weather[0].description;
-        
-        document.getElementById('main-temp').textContent = temp + "°C";
-        document.getElementById('weather-desc').textContent = desc;
-        document.getElementById('stat-hum').textContent = data.main.humidity + "%";
-        document.getElementById('stat-wind').textContent = Math.round(data.wind.speed * 3.6) + " km/j";
-        document.getElementById('stat-feels').textContent = Math.round(data.main.feels_like) + "°C";
+  // Weather Visual Effects Engine
+  function applyWeatherEffects(weatherId, iconCode) {
+      const effectsContainer = document.getElementById('weather-effects');
+      effectsContainer.innerHTML = ''; // Clear previous effects
+      document.body.classList.remove('night-mode');
 
-        // Share links setup
-        const shareText = `Cuaca di ${CITY_NAME} saat ini ${desc} dengan suhu ${temp}°C. Cek selengkapnya di CuacaIndo!`;
-        const currentUrl = window.location.href;
-        
-        document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + " " + currentUrl)}`;
-        document.getElementById('share-tw').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(currentUrl)}`;
+      const isNight = iconCode.includes('n');
+
+      // 1. Night Mode & Stars
+      if (isNight) {
+          document.body.classList.add('night-mode');
+          if(weatherId === 800 || weatherId === 801 || weatherId === 802) {
+              for (let i = 0; i < 80; i++) {
+                  let star = document.createElement('div');
+                  star.className = 'star';
+                  star.style.left = Math.random() * 100 + 'vw';
+                  star.style.top = Math.random() * 100 + 'vh';
+                  let size = Math.random() * 3;
+                  star.style.width = size + 'px';
+                  star.style.height = size + 'px';
+                  star.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                  star.style.animationDelay = Math.random() + 's';
+                  effectsContainer.appendChild(star);
+              }
+          }
       }
-    } catch (e) {
-      console.error("Data fetch error", e);
-      document.getElementById('weather-desc').textContent = "Error loading data.";
+
+      // 2. Sunny / Clear Day (Sun Flare)
+      if (weatherId === 800 && !isNight) {
+          let sun = document.createElement('div');
+          sun.className = 'sun-flare';
+          effectsContainer.appendChild(sun);
+      }
+
+      // 3. Rain / Thunderstorm
+      if (weatherId >= 200 && weatherId < 600) {
+          for (let i = 0; i < 60; i++) {
+              let drop = document.createElement('div');
+              drop.className = 'drop';
+              drop.style.left = Math.random() * 100 + 'vw';
+              drop.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
+              drop.style.animationDelay = Math.random() * 2 + 's';
+              effectsContainer.appendChild(drop);
+          }
+      }
+  }
+
+  async function fetchById(id){
+    try{
+        const r=await fetch(`https://api.openweathermap.org/data/2.5/weather?id=${id}&appid=${API_KEY}&units=metric&lang=id`);
+        return r.ok ? r.json() : null;
+    }catch{ return null; }
+  }
+
+  async function fetchByName(name){
+    try{
+      const r=await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(name)},ID&appid=${API_KEY}&units=metric&lang=id`);
+      if(!r.ok){ showError(); return; }
+      const data = await r.json();
+      showMain(data);
+    }catch{ showError(); }
+  }
+
+  function showMain(d){
+    if(!d || !d.main) { showError(); return; }
+    document.getElementById('error-msg').style.display='none';
+    document.getElementById('main-weather').style.display='block';
+    
+    // Apply visual effects based on weather code and icon (day/night)
+    applyWeatherEffects(d.weather[0].id, d.weather[0].icon);
+
+    document.getElementById('m-icon').textContent=getIcon(d.weather[0].id, d.weather[0].icon);
+    document.getElementById('m-city').textContent=d.name;
+    document.getElementById('m-temp').textContent=Math.round(d.main.temp)+'°C';
+    document.getElementById('m-desc').textContent=descID(d.weather[0].description);
+    document.getElementById('m-humidity').textContent=d.main.humidity+'%';
+    document.getElementById('m-wind').textContent=Math.round(d.wind.speed*3.6)+' km/j';
+    document.getElementById('m-feels').textContent=Math.round(d.main.feels_like)+'°C';
+    document.getElementById('m-vis').textContent=d.visibility?(d.visibility/1000).toFixed(1)+' km':'—';
+    
+    const card=document.getElementById('m-card');
+    card.style.animation='none'; void card.offsetWidth; card.style.animation='fadeUp 0.5s ease forwards';
+    document.getElementById('main-weather').scrollIntoView({behavior:'smooth',block:'center'});
+  }
+
+  function showError(){
+    document.getElementById('error-msg').style.display='block';
+    document.getElementById('main-weather').style.display='none';
+  }
+
+  function searchCity(){
+    const val=document.getElementById('search-input').value.trim();
+    if(val) fetchByName(val);
+  }
+  
+  function dropdownSearch(){
+    const val = document.getElementById('city-dropdown').value;
+    if(val) {
+        document.getElementById('search-input').value = val;
+        fetchByName(val);
     }
   }
 
-  // Backup Share setup (agar button click ho sakein agar API fail bhi ho)
-  document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=Cek cuaca terbaru di CuacaIndo!`;
-  document.getElementById('share-tw').href = `https://twitter.com/intent/tweet?text=Cek cuaca terbaru di CuacaIndo!`;
+  document.getElementById('search-input').addEventListener('keydown',e=>{if(e.key==='Enter')searchCity();});
 
-  getWeatherData();
-</script>
+  function buildGrid(){
+    const grid=document.getElementById('city-grid');
+    CITIES.forEach((city,i)=>{
+      const card=document.createElement('div');
+      card.className='city-card';
+      card.style.animationDelay=(i*0.07)+'s';
+      card.innerHTML=`<div class="city-icon">🌤️</div><div class="city-name">${city.name}</div><div class="city-temp" id="t-${city.id}">Memuat...</div><div class="city-desc" id="d-${city.id}"></div>`;
+      card.onclick=()=>{
+          document.getElementById('search-input').value=city.name; 
+          document.getElementById('city-dropdown').value='';
+          fetchById(city.id).then(d=>d&&showMain(d));
+      };
+      grid.appendChild(card);
+      fetchById(city.id).then(d=>{
+        if(!d || !d.main)return;
+        card.querySelector('.city-icon').textContent=getIcon(d.weather[0].id, d.weather[0].icon);
+        document.getElementById('t-'+city.id).textContent=Math.round(d.main.temp)+'°C';
+        document.getElementById('d-'+city.id).textContent=descID(d.weather[0].description);
+      });
+    });
+  }
+  buildGrid();
+</script> 
 </body>
 </html>
