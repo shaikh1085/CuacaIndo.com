@@ -9,39 +9,40 @@
   <meta name="description" content="Cek cuaca terkini di seluruh kota Indonesia. Prakiraan cuaca akurat untuk Jakarta, Surabaya, Bali, Medan, Bandung dan kota lainnya."/>
   <meta name="keywords" content="cuaca indonesia, prakiraan cuaca, cuaca hari ini, cuaca jakarta, cuaca bali, cuaca surabaya"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --sky: #08101d; --teal: #00c9b1; --teal2: #00e5cc;
+      --sky: #060b13; --teal: #00c9b1; --teal2: #00e5cc;
       --gold: #f5c842; --coral: #ff6b4a; --white: #f0f6ff;
-      --muted: #8faecf; --card: rgba(255, 255, 255, 0.03);
-      --glass: rgba(255, 255, 255, 0.06);
-      --card-border: rgba(0, 201, 177, 0.2);
+      --muted: #8faecf; --glass: rgba(255, 255, 255, 0.04);
+      --glass-hover: rgba(255, 255, 255, 0.08);
+      --card-border: rgba(255, 255, 255, 0.08);
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family:'DM Sans',sans-serif; background:var(--sky); color:var(--white); min-height:100vh; overflow-x:hidden; transition: background 1s ease; }
     
-    body.night-mode { background: #02060d; }
-    body.night-mode .orb1 { background: #111126; }
-    body.night-mode .orb3 { background: #0a2342; }
+    body.night-mode { background: #02050a; }
+    body.sunny-mode { background: #071524; }
 
     .bg-orbs { position:fixed; inset:0; z-index:0; pointer-events:none; }
-    .orb { position:absolute; border-radius:50%; filter:blur(100px); opacity:0.15; animation:drift 20s ease-in-out infinite alternate; transition: background 1s ease;}
+    .orb { position:absolute; border-radius:50%; filter:blur(120px); opacity:0.12; animation:drift 20s ease-in-out infinite alternate; transition: background 1s ease;}
     .orb1 { width:600px; height:600px; background:#00c9b1; top:-200px; left:-150px; }
     .orb2 { width:500px; height:500px; background:#1a5fa8; bottom:-150px; right:-100px; animation-delay:-6s; }
-    .orb3 { width:300px; height:300px; background:#f5c842; top:40%; left:50%; animation-delay:-12s; }
-    @keyframes drift { from{transform:translate(0,0) scale(1)} to{transform:translate(50px,40px) scale(1.05)} }
+    @keyframes drift { from{transform:translate(0,0) scale(1)} to{transform:translate(40px,30px) scale(1.05)} }
     
+    /* WEATHER EFFECTS INTERACTIVE */
     #weather-effects { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
     .drop { position: absolute; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.6)); width: 2px; height: 80px; bottom: 100%; animation: rain linear infinite; }
     @keyframes rain { 0% { transform: translateY(0); } 100% { transform: translateY(120vh); } }
-    .sun-flare { position: absolute; top: -150px; left: -150px; width: 800px; height: 800px; background: radial-gradient(circle, rgba(255,215,0,0.15) 0%, rgba(255,215,0,0) 60%); border-radius: 50%; animation: pulse 4s infinite alternate; filter: blur(50px); }
-    @keyframes pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.1); opacity: 1; } }
+    
+    .sun-flare { position: absolute; top: -200px; left: -200px; width: 900px; height: 900px; background: radial-gradient(circle, rgba(255,215,0,0.12) 0%, rgba(255,215,0,0) 60%); border-radius: 50%; animation: pulse 5s infinite alternate; filter: blur(40px); }
+    @keyframes pulse { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(1.08); opacity: 1; } }
+    
     .star { position: absolute; background: #fff; border-radius: 50%; animation: twinkle infinite alternate; }
     @keyframes twinkle { 0% { opacity: 0.1; } 100% { opacity: 1; box-shadow: 0 0 4px #fff; } }
 
     .wrapper { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:0 20px; }
-    header { padding:28px 0 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.08); }
+    header { padding:28px 0 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); }
     .logo { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:900; }
     .logo span { color:var(--teal); }
     .logo small { display:block; font-family:'DM Sans',sans-serif; font-size:0.6rem; letter-spacing:4px; color:var(--muted); text-transform:uppercase; margin-top:2px; }
@@ -53,56 +54,63 @@
     .search-section h1 em { color:var(--teal); font-style:normal; }
     .search-section p { color:var(--muted); font-size:0.95rem; margin-bottom:28px; }
     
-    /* Premium Glassmorphic Inputs */
     .search-box { display:flex; gap:12px; max-width:540px; margin:0 auto; }
-    .search-box input { flex:1; padding:16px 24px; background:rgba(255, 255, 255, 0.95); border:1px solid rgba(255,255,255,0.1); border-radius:50px; color:#0f172a; font-family:'DM Sans',sans-serif; font-size:1rem; outline:none; transition: all 0.3s; font-weight: 500; }
-    .search-box input::placeholder { color:#64748b; }
+    .search-box input { flex:1; padding:16px 24px; background:rgba(255, 255, 255, 0.95); border:none; border-radius:50px; color:#0f172a; font-family:'DM Sans',sans-serif; font-size:1rem; outline:none; transition: all 0.3s; font-weight: 500; }
     .search-box input:focus { background:#ffffff; box-shadow:0 0 25px rgba(0,201,177,0.4); }
     
-    .search-box button { padding:16px 32px; background:linear-gradient(135deg,var(--teal),var(--teal2)); border:none; border-radius:50px; color:#08101d; font-weight:700; font-family:'DM Sans',sans-serif; font-size:0.95rem; cursor:pointer; transition:transform 0.2s, box-shadow 0.2s; }
+    .search-box button { padding:16px 32px; background:linear-gradient(135deg,var(--teal),var(--teal2)); border:none; border-radius:50px; color:#060b13; font-weight:700; font-size:0.95rem; cursor:pointer; transition:all 0.2s; }
     .search-box button:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,201,177,0.4); }
     
     .dropdown-container { max-width:540px; margin:14px auto 0; }
-    select.city-dropdown { width:100%; padding:14px 24px; border-radius:50px; background: rgba(255, 255, 255, 0.06); color: var(--white); border: 1px solid rgba(255, 255, 255, 0.1); font-family:'DM Sans',sans-serif; font-size:0.9rem; outline:none; cursor:pointer; backdrop-filter: blur(10px); -webkit-appearance: none; appearance: none; transition: all 0.3s; }
-    select.city-dropdown:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(0,201,177,0.4); }
+    select.city-dropdown { width:100%; padding:14px 24px; border-radius:50px; background: var(--glass); color: var(--white); border: 1px solid var(--card-border); font-family:'DM Sans',sans-serif; font-size:0.9rem; outline:none; cursor:pointer; backdrop-filter: blur(10px); appearance: none; -webkit-appearance: none; transition: all 0.3s; }
+    select.city-dropdown:hover { background: var(--glass-hover); border-color: rgba(0,201,177,0.3); }
     select.city-dropdown option { background: #0f172a; color: #fff; }
     
     #main-weather { margin:40px 0; display:none; }
-    .main-card { background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.1); border-radius:28px; padding:40px; display:flex; gap:40px; align-items:center; flex-wrap:wrap; backdrop-filter:blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation:fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .main-card { background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); border:1px solid var(--card-border); border-radius:28px; padding:40px; display:flex; gap:40px; align-items:center; flex-wrap:wrap; backdrop-filter:blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation:fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
     
     .main-icon { font-size:5.5rem; line-height:1; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2)); }
     .main-city { font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:700; }
     .main-country { color:var(--teal); font-size:0.9rem; letter-spacing:2px; margin-top: 2px; }
     .main-temp { font-size:5rem; font-weight:300; line-height:1; margin:12px 0; background:linear-gradient(135deg,var(--white),#a5f3fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    .main-desc { color:var(--muted); font-size:1.05rem; text-transform:capitalize; letter-spacing: 0.5px; }
+    .main-desc { color:var(--muted); font-size:1.05rem; text-transform:capitalize; }
     
     .main-stats { display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:16px; margin-top:24px; width: 100%; }
-    .stat { background:rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius:16px; padding:14px; text-align:center; backdrop-filter: blur(5px); transition: background 0.3s; }
-    .stat:hover { background: rgba(255,255,255,0.06); }
+    .stat { background:rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius:16px; padding:14px; text-align:center; transition: background 0.3s; }
     .stat-val { font-size:1.2rem; font-weight:600; color:var(--gold); }
     .stat-label { font-size:0.75rem; color:var(--muted); margin-top:4px; }
     
+    /* PREMIUM 7-DAY FORECAST SECTION */
+    #forecast-section { display: none; margin-bottom: 40px; animation: fadeUp 0.6s ease forwards; }
+    .forecast-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 14px; margin-top: 15px; }
+    .forecast-card { background: var(--glass); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px 14px; text-align: center; backdrop-filter: blur(10px); transition: transform 0.3s, background 0.3s; }
+    .forecast-card:hover { transform: translateY(-4px); background: var(--glass-hover); border-color: var(--teal); }
+    .fore-day { font-size: 0.9rem; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+    .fore-date { font-size: 0.72rem; color: var(--muted); margin-bottom: 12px; }
+    .fore-icon { font-size: 2.2rem; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+    .fore-temp { font-size: 1.3rem; font-weight: 600; color: var(--teal2); }
+    .fore-desc { font-size: 0.75rem; color: var(--muted); margin-top: 4px; text-transform: capitalize; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
     .section-title { font-family:'Playfair Display',serif; font-size:1.5rem; margin:45px 0 20px; display:flex; align-items:center; gap:12px; }
     .section-title::after { content:''; flex:1; height:1px; background:linear-gradient(to right,rgba(255,255,255,0.1),transparent); }
     
-    /* Modern Glass Grid Cards */
     .city-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:20px; margin-bottom:40px; }
-    .city-card { background: var(--glass); border:1px solid rgba(255,255,255,0.06); border-radius:20px; padding:24px; cursor:pointer; backdrop-filter: blur(15px); transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1); opacity:0; animation:fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .city-card:hover { transform:translateY(-6px); border-color:var(--teal); background: rgba(255,255,255,0.09); box-shadow:0 15px 35px rgba(0,201,177,0.15); }
-    .city-icon { font-size:2.5rem; margin-bottom:12px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); }
+    .city-card { background: var(--glass); border:1px solid var(--card-border); border-radius:20px; padding:24px; cursor:pointer; backdrop-filter: blur(15px); transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1); opacity:0; animation:fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .city-card:hover { transform:translateY(-6px); border-color:var(--teal); background: var(--glass-hover); box-shadow:0 15px 35px rgba(0,201,177,0.15); }
+    .city-icon { font-size:2.5rem; margin-bottom:12px; }
     .city-name { font-size:1.1rem; font-weight:500; margin-bottom:6px; }
     .city-temp { font-size:2rem; font-weight:300; color:var(--teal2); }
     .city-desc { font-size:0.8rem; color:var(--muted); margin-top:6px; text-transform: capitalize; }
     
     .tips-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:40px; }
-    .tip-card { background:rgba(245,200,66,0.03); border:1px solid rgba(245,200,66,0.1); border-radius:16px; padding:20px; backdrop-filter: blur(5px); }
+    .tip-card { background:rgba(245,200,66,0.02); border:1px solid rgba(245,200,66,0.08); border-radius:16px; padding:20px; backdrop-filter: blur(5px); }
     .tip-card h3 { font-size:0.95rem; margin-bottom:8px; color:var(--gold); display: flex; align-items: center; gap: 6px; }
     .tip-card p { font-size:0.85rem; color:var(--muted); line-height:1.6; }
     
-    footer { border-top:1px solid rgba(255,255,255,0.08); padding:30px 0; text-align:center; color:var(--muted); font-size:0.85rem; margin-top: 60px; }
+    footer { border-top:1px solid rgba(255,255,255,0.06); padding:30px 0; text-align:center; color:var(--muted); font-size:0.85rem; margin-top: 60px; }
     footer strong { color:var(--teal); }
-    .error-msg { background:rgba(255,107,74,0.1); border:1px solid rgba(255,107,74,0.2); border-radius:14px; padding:16px; color:var(--coral); text-align:center; margin:15px auto; max-width: 540px; display:none; backdrop-filter: blur(10px); }
+    .error-msg { background:rgba(255,107,74,0.1); border:1px solid rgba(255,107,74,0.2); border-radius:14px; padding:16px; color:var(--coral); text-align:center; margin:15px auto; max-width: 540px; display:none; }
     
     @media(max-width:600px) { .main-card{flex-direction:column;padding:28px; gap:20px;} .main-temp{font-size:3.8rem} .search-box{flex-direction:column} }
   </style>
@@ -112,7 +120,7 @@
 <div id="weather-effects"></div>
 
 <div class="bg-orbs">
-  <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+  <div class="orb orb1"></div><div class="orb orb2"></div>
 </div>
 
 <div class="wrapper">
@@ -176,6 +184,11 @@
     </div>
   </div>
 
+  <div id="forecast-section">
+     <div class="section-title" id="forecast-title">📅 Prakiraan 5-7 Hari ke Depan</div>
+     <div class="forecast-grid" id="forecast-grid"></div>
+  </div>
+
   <div class="section-title">🏙️ Kota-Kota Utama Indonesia</div>
   <div class="city-grid" id="city-grid"></div>
 
@@ -189,14 +202,13 @@
 
   <footer>
     <p>© 2026 <strong>CuacaIndo</strong> — Data dari OpenWeatherMap</p>
-    <p style="margin-top:6px; opacity: 0.7;">Jakarta · Surabaya · Bali · Medan · Bandung · Makassar</p>
+    <p style="margin-top:6px; opacity: 0.6;">Jakarta · Surabaya · Bali · Medan · Bandung · Makassar</p>
   </footer>
 </div>
 
 <script>
   const API_KEY = '82be2db14f9b737940ac1a0e8f3c93a7';
 
-  // Fixed List containing names & exact OpenWeather IDs
   const CITIES = [
     {name:'Jakarta',    id:1642911},{name:'Surabaya',  id:1625822},
     {name:'Bali',      id:1650218},{name:'Medan',     id:1214520},
@@ -230,7 +242,6 @@
     return map[desc.toLowerCase()]||desc;
   }
 
-  // Live WIB Clock
   function updateClock(){
     const now = new Date();
     const optionsTime = { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit' };
@@ -242,61 +253,98 @@
   setInterval(updateClock, 1000); 
   updateClock();
 
-  // Weather Visual Effects Engine
+  // ADVANCED WEATHER VISUAL EFFECTS INTERACTIVE ENGINE
   function applyWeatherEffects(weatherId, iconCode) {
       const effectsContainer = document.getElementById('weather-effects');
       effectsContainer.innerHTML = ''; 
-      document.body.classList.remove('night-mode');
+      document.body.classList.remove('night-mode', 'sunny-mode');
 
       const isNight = iconCode.includes('n');
 
       if (isNight) {
           document.body.classList.add('night-mode');
-          if(weatherId === 800 || weatherId === 801 || weatherId === 802) {
-              for (let i = 0; i < 60; i++) {
-                  let star = document.createElement('div');
-                  star.className = 'star';
-                  star.style.left = Math.random() * 100 + 'vw';
-                  star.style.top = Math.random() * 100 + 'vh';
-                  let size = Math.random() * 2 + 1;
-                  star.style.width = size + 'px';
-                  star.style.height = size + 'px';
-                  star.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
-                  star.style.animationDelay = Math.random() + 's';
-                  effectsContainer.appendChild(star);
-              }
+          for (let i = 0; i < 65; i++) {
+              let star = document.createElement('div');
+              star.className = 'star';
+              star.style.left = Math.random() * 100 + 'vw';
+              star.style.top = Math.random() * 100 + 'vh';
+              let size = Math.random() * 2 + 1;
+              star.style.width = size + 'px';
+              star.style.height = size + 'px';
+              star.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+              star.style.animationDelay = Math.random() + 's';
+              effectsContainer.appendChild(star);
           }
-      }
-
-      if (weatherId === 800 && !isNight) {
+      } else if (weatherId === 800) {
+          document.body.classList.add('sunny-mode');
           let sun = document.createElement('div');
           sun.className = 'sun-flare';
           effectsContainer.appendChild(sun);
       }
 
       if (weatherId >= 200 && weatherId < 600) {
-          for (let i = 0; i < 50; i++) {
+          for (let i = 0; i < 55; i++) {
               let drop = document.createElement('div');
               drop.className = 'drop';
               drop.style.left = Math.random() * 100 + 'vw';
               drop.style.animationDuration = (Math.random() * 0.4 + 0.4) + 's';
-              drop.style.animationDelay = Math.random() * 2 + 's';
+              drop.style.animationDelay = Math.random() * 1.5 + 's';
               effectsContainer.appendChild(drop);
           }
       }
   }
 
-  // Individual single search
+  // Fetch 7 Days Forecast and Build UI
+  async function fetchForecast(cityName) {
+    try {
+      const r = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(cityName)},ID&appid=${API_KEY}&units=metric&lang=id`);
+      if(!r.ok) return;
+      const data = await r.json();
+      
+      const grid = document.getElementById('forecast-grid');
+      grid.innerHTML = '';
+      document.getElementById('forecast-title').innerHTML = `📅 Prakiraan Cuaca Berkelanjutan — ${data.city.name}`;
+      document.getElementById('forecast-section').style.display = 'block';
+
+      // OpenWeather 5-day offers 3-hour chunks, we filter to display one unique card per day
+      const seenDates = new Set();
+      let count = 0;
+
+      data.list.forEach(item => {
+         const dateObj = new Date(item.dt * 1000);
+         const dayName = dateObj.toLocaleDateString('id-ID', { weekday: 'long' });
+         const dateString = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+         
+         // Select mid-day data chunks for consistency
+         if(!seenDates.has(dayName) && count < 6) {
+            seenDates.add(dayName);
+            count++;
+
+            const fCard = document.createElement('div');
+            fCard.className = 'forecast-card';
+            fCard.innerHTML = `
+               <div class="fore-day">${dayName}</div>
+               <div class="fore-date">${dateString}</div>
+               <div class="fore-icon">${getIcon(item.weather[0].id, item.weather[0].icon)}</div>
+               <div class="fore-temp">${Math.round(item.main.temp)}°C</div>
+               <div class="fore-desc">${descID(item.weather[0].description)}</div>
+            `;
+            grid.appendChild(fCard);
+         }
+      });
+    } catch(e) { console.log(e); }
+  }
+
   async function fetchByName(name){
     try{
       const r=await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(name)},ID&appid=${API_KEY}&units=metric&lang=id`);
       if(!r.ok){ showError(); return; }
       const data = await r.json();
       showMain(data);
+      fetchForecast(data.name);
     }catch{ showError(); }
   }
 
-  // Click handler for grid items
   async function fetchSingleId(id) {
     try {
       const r = await fetch(`https://api.openweathermap.org/data/2.5/weather?id=${id}&appid=${API_KEY}&units=metric&lang=id`);
@@ -322,12 +370,13 @@
     
     const card=document.getElementById('m-card');
     card.style.animation='none'; void card.offsetWidth; card.style.animation='fadeUp 0.5s ease forwards';
-    document.getElementById('main-weather').scrollIntoView({behavior:'smooth',block:'center'});
+    document.getElementById('main-weather').scrollIntoView({behavior:'smooth',block:'start'});
   }
 
   function showError(){
     document.getElementById('error-msg').style.display='block';
     document.getElementById('main-weather').style.display='none';
+    document.getElementById('forecast-section').style.display='none';
   }
 
   function searchCity(){
@@ -345,17 +394,15 @@
 
   document.getElementById('search-input').addEventListener('keydown',e=>{if(e.key==='Enter')searchCity();});
 
-  // Upgraded Grid Builder: Fetches all grid cities using ONE group API request to prevent loading freezes!
   async function buildGrid(){
     const grid=document.getElementById('city-grid');
     grid.innerHTML = ''; 
     
-    // Create skeleton cards instantly
     CITIES.forEach((city, i) => {
       const card = document.createElement('div');
       card.className = 'city-card';
       card.id = `ccard-${city.id}`;
-      card.style.animationDelay = (i * 0.05) + 's';
+      card.style.animationDelay = (i * 0.04) + 's';
       card.innerHTML = `
         <div class="city-icon" id="icon-${city.id}">⏳</div>
         <div class="city-name">${city.name}</div>
@@ -365,19 +412,22 @@
       card.onclick = () => {
           document.getElementById('search-input').value = city.name; 
           document.getElementById('city-dropdown').value = '';
-          fetchSingleId(city.id).then(d => d && showMain(d));
+          fetchSingleId(city.id).then(d => {
+             if(d) {
+                showMain(d);
+                fetchForecast(d.name);
+             }
+          });
       };
       grid.appendChild(card);
     });
 
-    // Extract IDs array and fetch everything in a single consolidated hit
     const ids = CITIES.map(c => c.id).join(',');
     try {
       const res = await fetch(`https://api.openweathermap.org/data/2.5/group?id=${ids}&appid=${API_KEY}&units=metric&lang=id`);
       if(!res.ok) return;
       const data = await res.json();
       
-      // Update data seamlessly
       data.list.forEach(cityData => {
         const id = cityData.id;
         const tempEl = document.getElementById(`t-${id}`);
@@ -388,9 +438,7 @@
         if(descEl) descEl.textContent = descID(cityData.weather[0].description);
         if(iconEl) iconEl.textContent = getIcon(cityData.weather[0].id, cityData.weather[0].icon);
       });
-    } catch (e) {
-      console.log("Grid loading error:", e);
-    }
+    } catch (e) { console.log(e); }
   }
   
   buildGrid();
