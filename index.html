@@ -90,14 +90,14 @@
     .section-title::after { content:''; flex:1; height:1px; background:linear-gradient(to right,var(--card-border),transparent); }
     .city-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; margin-bottom:36px; }
     
-    /* Added display: block to make standard anchor links function cleanly inside grid */
-    .city-link-wrapper { display: block; text-decoration: none; color: inherit; }
+    /* CSS link styling for layout safety */
+    .city-grid a { text-decoration: none; color: inherit; display: block; }
+    
     .city-card { background:var(--card); border:1px solid var(--card-border); border-radius:18px; padding:22px; cursor:pointer; transition:transform 0.25s,border-color 0.25s,box-shadow 0.25s; animation:fadeUp 0.5s ease forwards; }
     .city-card:hover { transform:translateY(-4px); border-color:var(--teal); box-shadow:0 12px 32px rgba(0,201,177,0.15); }
     .city-icon { font-size:2.2rem; margin-bottom:10px; }
     .city-name { font-size:1rem; font-weight:500; margin-bottom:4px; }
     .city-temp { font-size:1.7rem; font-weight:300; color:var(--teal2); }
-    .city-grid a { text-decoration: none; color: inherit; }
     .city-desc { font-size:0.75rem; color:var(--muted); margin-top:4px; }
     
     .tips-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; margin-bottom:36px; }
@@ -160,7 +160,7 @@
         </select>
     </div>
     
-    <div class="error-msg" id="error-msg">Kota tidak ditemukan. Coba nama kota lian.</div>
+    <div class="error-msg" id="error-msg">Kota tidak ditemukan. Coba nama kota lain.</div>
   </div>
 
   <div id="main-weather">
@@ -201,7 +201,7 @@
 <script>
   const API_KEY = '82be2db14f9b737940ac1a0e8f3c93a7';
 
-  // Added targetUrl to map the 5 specific city pages smoothly
+  // Added targetUrl to map the 5 specific city files safely
   const CITIES = [
     {name:'Jakarta',   id:1642911, targetUrl: 'jakarta.html'},
     {name:'Surabaya', id:1625822, targetUrl: 'surabaya.html'},
@@ -359,31 +359,31 @@
   function buildGrid(){
     const grid=document.getElementById('city-grid');
     CITIES.forEach((city,i)=>{
-      // If targetUrl exists, wrap card inside standard anchor link, otherwise create standalone card click action
+      // Grid HTML injection logic handles targetUrl safely without braking design
+      let cardHTML = `<div class="city-card" style="animation-delay: ${i * 0.07}s">
+        <div class="city-icon">🌤️</div>
+        <div class="city-name">${city.name}</div>
+        <div class="city-temp" id="t-${city.id}">Memuat...</div>
+        <div class="city-desc" id="d-${city.id}"></div>
+      </div>`;
+
+      let element;
       if (city.targetUrl) {
-          const linkWrapper = document.createElement('a');
-          linkWrapper.href = city.targetUrl;
-          linkWrapper.className = 'city-link-wrapper';
-          
-          const card = document.createElement('div');
-          card.className = 'city-card';
-          card.style.animationDelay = (i * 0.07) + 's';
-          card.innerHTML = `<div class="city-icon">🌤️</div><div class="city-name">${city.name}</div><div class="city-temp" id="t-${city.id}">Memuat...</div><div class="city-desc" id="d-${city.id}"></div>`;
-          
-          linkWrapper.appendChild(card);
-          grid.appendChild(linkWrapper);
+          element = document.createElement('a');
+          element.href = city.targetUrl;
+          element.innerHTML = cardHTML;
       } else {
-          const card = document.createElement('div');
-          card.className = 'city-card';
-          card.style.animationDelay = (i * 0.07) + 's';
-          card.innerHTML = `<div class="city-icon">🌤️</div><div class="city-name">${city.name}</div><div class="city-temp" id="t-${city.id}">Memuat...</div><div class="city-desc" id="d-${city.id}"></div>`;
-          card.onclick = () => {
+          element = document.createElement('div');
+          element.innerHTML = cardHTML;
+          element.firstElementChild.onclick = () => {
               document.getElementById('search-input').value = city.name; 
               document.getElementById('city-dropdown').value = '';
               fetchById(city.id).then(d => d && showMain(d));
           };
-          grid.appendChild(card);
+          element = element.firstElementChild;
       }
+      
+      grid.appendChild(element);
 
       fetchById(city.id).then(d=>{
         if(!d || !d.main)return;
