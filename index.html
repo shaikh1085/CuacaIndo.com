@@ -1,252 +1,317 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <meta name="google-site-verification" content="3pPVFYIT2lG94-KYpLg-Y9y0SgXbZf68J8vB5W2vA_U" />
+  <meta name="monetag" content="93ac63f4b4288fac61931aa704d1c102">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CuacaIndo — Informasi Cuaca Indonesia</title>
-  <meta name="description" content="Pantau prakiraan cuaca terkini di Jakarta, Bali, Surabaya, Medan, Bandung dan kota-kota lainnya di Indonesia."/>
-  
+  <title>CuacaIndo – Informasi Cuaca Indonesia Terkini</title>
+  <meta name="description" content="Cek cuaca terkini di seluruh kota Indonesia. Prakiraan cuaca akurat untuk Jakarta, Surabaya, Bali, Medan, Bandung dan kota lainnya."/>
+  <meta name="keywords" content="cuaca indonesia, prakiraan cuaca, cuaca hari ini, cuaca jakarta, cuaca bali, cuaca surabaya"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght=700;900&family=DM+Sans:wght=300;400;500;700&display=swap" rel="stylesheet">
-  
   <style>
     :root {
       --sky: #060b13; --teal: #00c9b1; --teal2: #00e5cc;
-      --gold: #f5c842; --white: #f0f6ff; --muted: #8faecf; 
-      --glass: rgba(255, 255, 255, 0.04); --card-border: rgba(255, 255, 255, 0.08);
+      --gold: #f5c842; --coral: #ff6b4a; --white: #f0f6ff;
+      --muted: #8faecf; --glass: rgba(255, 255, 255, 0.04);
+      --glass-hover: rgba(255, 255, 255, 0.08);
+      --card-border: rgba(255, 255, 255, 0.08);
     }
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:'DM Sans',sans-serif; background:var(--sky); color:var(--white); min-height:100vh; overflow-x:hidden; }
+    body { font-family:'DM Sans',sans-serif; background:var(--sky); color:var(--white); min-height:100vh; overflow-x:hidden; transition: background 1s ease; }
     
+    body.night-mode { background: #02050a; }
+    body.sunny-mode { background: #071524; }
+
+    .bg-orbs { position:fixed; inset:0; z-index:0; pointer-events:none; }
+    .orb { position:absolute; border-radius:50%; filter:blur(120px); opacity:0.12; animation:drift 20s ease-in-out infinite alternate; transition: background 1s ease;}
+    .orb1 { width:600px; height:600px; background:#00c9b1; top:-200px; left:-150px; }
+    .orb2 { width:500px; height:500px; background:#1a5fa8; bottom:-150px; right:-100px; animation-delay:-6s; }
+    @keyframes drift { from{transform:translate(0,0) scale(1)} to{transform:translate(40px,30px) scale(1.05)} }
+    
+    /* WEATHER EFFECTS INTERACTIVE */
+    #weather-effects { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .drop { position: absolute; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.6)); width: 2px; height: 80px; bottom: 100%; animation: rain linear infinite; }
+    @keyframes rain { 0% { transform: translateY(0); } 100% { transform: translateY(120vh); } }
+    
+    .sun-flare { position: absolute; top: -200px; left: -200px; width: 900px; height: 900px; background: radial-gradient(circle, rgba(255,215,0,0.12) 0%, rgba(255,215,0,0) 60%); border-radius: 50%; animation: pulse 5s infinite alternate; filter: blur(40px); }
+    @keyframes pulse { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(1.08); opacity: 1; } }
+    
+    .star { position: absolute; background: #fff; border-radius: 50%; animation: twinkle infinite alternate; }
+    @keyframes twinkle { 0% { opacity: 0.1; } 100% { opacity: 1; box-shadow: 0 0 4px #fff; } }
+
     .wrapper { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:0 20px; }
-    
     header { padding:28px 0 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); }
-    .logo { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:900; color: inherit; text-decoration: none; }
+    .logo { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:900; }
     .logo span { color:var(--teal); }
     .logo small { display:block; font-family:'DM Sans',sans-serif; font-size:0.6rem; letter-spacing:4px; color:var(--muted); text-transform:uppercase; margin-top:2px; }
     
-    /* Units Toggle Style */
-    .unit-toggle-btn { background: var(--glass); border: 1px solid var(--card-border); padding: 10px 20px; border-radius: 30px; color: var(--white); font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.9rem; }
+    .header-right { display: flex; align-items: center; gap: 20px; text-align: right; }
+    .header-time { font-size:0.78rem; color:var(--muted); }
+    .header-time #clock { font-size:1.4rem; font-weight:500; color:var(--white); display:block; margin-bottom:2px; }
+    
+    /* Premium Unit Toggle */
+    .unit-toggle-btn { background: var(--glass); border: 1px solid var(--card-border); padding: 8px 16px; border-radius: 30px; color: var(--white); font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
     .unit-toggle-btn:hover { background: var(--teal); color: #060b13; box-shadow: 0 4px 15px rgba(0,201,177,0.3); }
 
-    /* Main Search Panel Section */
-    .search-section { text-align: center; padding: 50px 0 30px; }
-    .search-section h1 { font-family:'Playfair Display',serif; font-size: 2.5rem; margin-bottom: 8px; }
-    .search-section p { color: var(--muted); margin-bottom: 25px; }
-    .search-box { display: flex; justify-content: center; gap: 10px; max-width: 500px; margin: 0 auto 20px; }
-    .search-input { flex: 1; padding: 14px 20px; border-radius: 30px; border: 1px solid var(--card-border); background: rgba(255,255,255,0.05); color: #fff; font-size: 1rem; outline: none; }
-    .search-btn { background: var(--teal); border: none; padding: 0 25px; border-radius: 30px; font-weight: bold; cursor: pointer; color: #060b13; }
-    .city-select { width: 100%; max-width: 500px; padding: 12px; border-radius: 10px; background: #fff; color: #333; font-size: 1rem; border: none; margin: 0 auto; display: block; }
+    .search-section { padding:40px 0 20px; text-align:center; }
+    .search-section h1 { font-family:'Playfair Display',serif; font-size:clamp(2rem,6vw,3.5rem); font-weight:700; line-height:1.1; margin-bottom:12px; }
+    .search-section h1 em { color:var(--teal); font-style:normal; }
+    .search-section p { color:var(--muted); font-size:0.95rem; margin-bottom:28px; }
+    
+    .search-box { display:flex; gap:12px; max-width:540px; margin:0 auto; }
+    .search-box input { flex:1; padding:16px 24px; background:rgba(255, 255, 255, 0.95); border:none; border-radius:50px; color:#0f172a; font-family:'DM Sans',sans-serif; font-size:1rem; outline:none; transition: all 0.3s; font-weight: 500; }
+    .search-box input:focus { background:#ffffff; box-shadow:0 0 25px rgba(0,201,177,0.4); }
+    
+    .search-box button { padding:16px 32px; background:linear-gradient(135deg,var(--teal),var(--teal2)); border:none; border-radius:50px; color:#060b13; font-weight:700; font-size:0.95rem; cursor:pointer; transition:all 0.2s; }
+    .search-box button:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,201,177,0.4); }
+    
+    .dropdown-container { max-width:540px; margin:14px auto 0; }
+    select.city-dropdown { width:100%; padding:14px 24px; border-radius:50px; background: var(--glass); color: var(--white); border: 1px solid var(--card-border); font-family:'DM Sans',sans-serif; font-size:0.9rem; outline:none; cursor:pointer; backdrop-filter: blur(10px); appearance: none; -webkit-appearance: none; transition: all 0.3s; }
+    select.city-dropdown:hover { background: var(--glass-hover); border-color: rgba(0,201,177,0.3); }
+    select.city-dropdown option { background: #0f172a; color: #fff; }
+    
+    /* Main Weather Detail Card */
+    #main-weather { margin:40px 0; display:none; }
+    .main-card { background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); border:1px solid var(--card-border); border-radius:28px; padding:40px; display:flex; gap:40px; align-items:center; flex-wrap:wrap; backdrop-filter:blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.3); animation:fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    
+    .main-icon { font-size:5.5rem; line-height:1; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2)); }
+    .main-city { font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:700; }
+    .main-country { color:var(--teal); font-size:0.9rem; letter-spacing:2px; margin-top: 2px; }
+    .main-temp { font-size:5rem; font-weight:300; line-height:1; margin:12px 0; background:linear-gradient(135deg,var(--white),#a5f3fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .main-desc { color:var(--muted); font-size:1.05rem; text-transform:capitalize; }
+    
+    /* Social Sharing Panel inside Main Card */
+    .share-container { display: flex; gap: 10px; margin-top: 15px; }
+    .share-btn { display: flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 20px; text-decoration: none; font-size: 0.85rem; font-weight: bold; color: #fff; transition: transform 0.2s, opacity 0.2s; }
+    .share-btn:hover { transform: translateY(-2px); opacity: 0.9; }
+    .share-wa { background: #25D366; }
+    .share-tw { background: #1DA1F2; }
 
-    /* Major Cities Section Title */
-    .section-title { font-family:'Playfair Display',serif; font-size:1.6rem; margin:50px 0 25px; display:flex; align-items:center; gap:12px; }
+    .main-stats { display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:16px; margin-top:24px; width: 100%; }
+    .stat { background:rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius:16px; padding:14px; text-align:center; transition: background 0.3s; }
+    .stat-val { font-size:1.2rem; font-weight:600; color:var(--gold); }
+    .stat-label { font-size:0.75rem; color:var(--muted); margin-top:4px; }
+    
+    /* 7-DAY FORECAST PANEL */
+    #forecast-section { display: none; margin-bottom: 40px; animation: fadeUp 0.6s ease forwards; }
+    .forecast-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 14px; margin-top: 15px; }
+    .forecast-card { background: var(--glass); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px 14px; text-align: center; backdrop-filter: blur(10px); transition: transform 0.3s, background 0.3s; }
+    .forecast-card:hover { transform: translateY(-4px); background: var(--glass-hover); border-color: var(--teal); }
+    .fore-day { font-size: 0.9rem; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+    .fore-date { font-size: 0.72rem; color: var(--muted); margin-bottom: 12px; }
+    .fore-icon { font-size: 2.2rem; margin-bottom: 10px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+    .fore-temp { font-size: 1.3rem; font-weight: 600; color: var(--teal2); }
+    .fore-desc { font-size: 0.75rem; color: var(--muted); margin-top: 4px; text-transform: capitalize; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* Cities Section Layout */
+    .section-title { font-family:'Playfair Display',serif; font-size:1.5rem; margin:45px 0 20px; display:flex; align-items:center; gap:12px; }
     .section-title::after { content:''; flex:1; height:1px; background:linear-gradient(to right,rgba(255,255,255,0.1),transparent); }
     
-    /* Cities Grid and Cards Layout */
-    .cities-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; }
-    .city-card { background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); border: 1px solid var(--card-border); border-radius: 24px; padding: 25px; backdrop-filter: blur(15px); transition: transform 0.3s, border-color 0.3s; position: relative; }
-    .city-card:hover { transform: translateY(-5px); border-color: var(--teal); }
+    .city-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:20px; margin-bottom:40px; }
+    .city-card { display: block; text-decoration: none; background: var(--glass); border:1px solid var(--card-border); border-radius:20px; padding:24px; cursor:pointer; backdrop-filter: blur(15px); transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1); opacity:0; animation:fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .city-card:hover { transform:translateY(-6px); border-color:var(--teal); background: var(--glass-hover); box-shadow:0 15px 35px rgba(0,201,177,0.15); }
+    .city-icon { font-size:2.5rem; margin-bottom:12px; }
+    .city-name { font-size:1.1rem; font-weight:500; margin-bottom:6px; color: var(--white); }
+    .city-temp { font-size:2rem; font-weight:300; color:var(--teal2); }
+    .city-desc { font-size:0.8rem; color:var(--muted); margin-top:6px; text-transform: capitalize; }
     
-    .card-icon { font-size: 2.8rem; margin-bottom: 12px; }
-    .card-name { font-size: 1.3rem; font-weight: 700; margin-bottom: 5px; }
-    .card-name a { color: inherit; text-decoration: none; }
-    .card-name a:hover { color: var(--teal); }
-    .card-temp { font-size: 2.3rem; font-weight: 300; color: var(--teal2); margin: 10px 0; }
-    .card-desc { font-size: 0.88rem; color: var(--muted); text-transform: capitalize; margin-bottom: 15px; }
-    
-    /* Inline Mini Share Buttons */
+    /* Mini Sharing inside grid cards */
     .card-share { display: flex; gap: 8px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 12px; }
-    .mini-share { font-size: 0.75rem; text-decoration: none; color: #fff; padding: 5px 10px; border-radius: 12px; font-weight: bold; display: flex; align-items: center; gap: 4px; transition: opacity 0.2s; }
+    .mini-share { font-size: 0.72rem; text-decoration: none; color: #fff; padding: 5px 10px; border-radius: 12px; font-weight: bold; display: flex; align-items: center; gap: 4px; transition: opacity 0.2s; }
     .mini-share:hover { opacity: 0.8; }
     .sh-wa { background: #25D366; }
     .sh-tw { background: #1DA1F2; }
 
-    footer { border-top:1px solid rgba(255,255,255,0.06); padding:40px 0; text-align:center; color:var(--muted); font-size:0.85rem; margin-top: 60px; }
+    /* Weather tips and Footer styling */
+    .tips-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:40px; }
+    .tip-card { background:rgba(245,200,66,0.02); border:1px solid rgba(245,200,66,0.08); border-radius:16px; padding:20px; backdrop-filter: blur(5px); }
+    .tip-card h3 { font-size:0.95rem; margin-bottom:8px; color:var(--gold); display: flex; align-items: center; gap: 6px; }
+    .tip-card p { font-size:0.85rem; color:var(--muted); line-height:1.6; }
+    
+    footer { border-top:1px solid rgba(255,255,255,0.06); padding:40px 0 30px; text-align:center; color:var(--muted); font-size:0.85rem; margin-top: 60px; }
     footer strong { color:var(--teal); }
-    @media(max-width: 600px) { .search-box { flex-direction: column; } .search-btn { padding: 14px; } header { flex-direction: column; gap: 15px; text-align: center; } }
+    .error-msg { background:rgba(255,107,74,0.1); border:1px solid rgba(255,107,74,0.2); border-radius:14px; padding:16px; color:var(--coral); text-align:center; margin:15px auto; max-width: 540px; display:none; }
+    
+    @media(max-width:600px) { 
+      .main-card{flex-direction:column;padding:28px; gap:20px;} 
+      .main-temp{font-size:3.8rem} 
+      .search-box{flex-direction:column} 
+      header{flex-direction: column; text-align: center; gap: 15px;}
+      .header-right{flex-direction: column; gap: 10px; text-align: center;}
+    }
   </style>
 </head>
 <body>
 
+<div id="weather-effects"></div>
+
+<div class="bg-orbs">
+  <div class="orb orb1"></div><div class="orb orb2"></div>
+</div>
+
 <div class="wrapper">
   <header>
-    <a href="index.html" class="logo">Cuaca<span>Indo</span><small>Informasi Cuaca Indonesia</small></a>
-    <button class="unit-toggle-btn" id="unit-toggle" onclick="toggleUnits()">Ubah ke °F</button>
+    <div class="logo">Cuaca<span>Indo</span><small>Informasi Cuaca Indonesia</small></div>
+    <div class="header-right">
+      <div class="header-time">
+          <span style="font-size:0.7rem; color:var(--teal); display:block; margin-bottom:2px;">Waktu Indonesia (WIB)</span>
+          <span id="clock"></span>
+          <span id="date-display"></span>
+      </div>
+      <button class="unit-toggle-btn" id="unit-toggle" onclick="toggleUnits()">Ubah ke °F</button>
+    </div>
   </header>
+  
+  <div class="search-section">
+    <h1>Cuaca <em>Terkini</em><br>Seluruh Indonesia</h1>
+    <p>Masukkan nama kota atau pilih dari daftar</p>
+    
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="Cari kota... (contoh: Yogyakarta)"/>
+      <button onclick="searchCity()">🔍 Cari</button>
+    </div>
+    
+    <div class="dropdown-container">
+        <!-- ALL ORIGINAL CITIES LOADED IN THE DROPDOWN SELECTBOX -->
+        <select id="city-dropdown" class="city-dropdown" onchange="dropdownSearch()">
+            <option value="">-- Atau Pilih Kota Besar --</option>
+            <option value="Jakarta">Jakarta</option>
+            <option value="Surabaya">Surabaya</option>
+            <option value="Bandung">Bandung</option>
+            <option value="Medan">Medan</option>
+            <option value="Semarang">Semarang</option>
+            <option value="Makassar">Makassar</option>
+            <option value="Palembang">Palembang</option>
+            <option value="Bali">Bali (Denpasar)</option>
+            <option value="Yogyakarta">Yogyakarta</option>
+            <option value="Batam">Batam</option>
+            <option value="Malang">Malang</option>
+            <option value="Pekanbaru">Pekanbaru</option>
+            <option value="Balikpapan">Balikpapan</option>
+            <option value="Samarinda">Samarinda</option>
+            <option value="Banjarmasin">Banjarmasin</option>
+        </select>
+    </div>
+    
+    <div class="error-msg" id="error-msg">Kota tidak ditemukan. Coba nama kota lain.</div>
+  </div>
 
-  <main>
-    <section class="search-section">
-      <h1>Cari Cuaca di Seluruh Indonesia</h1>
-      <p>Masukkan nama kota atau pilih dari daftar di bawah</p>
-      <div class="search-box">
-        <input type="text" id="custom-search" class="search-input" placeholder="Ketik nama kota... (Contoh: Palembang)">
-        <button class="search-btn" onclick="searchCustomCity()">🔍 Cari</button>
-      </div>
-      <select class="city-select" onchange="location = this.value;">
-        <option value="">-- Atau Pilih Kota Besar --</option>
-        <option value="jakarta.html">Jakarta</option>
-        <option value="surabaya.html">Surabaya</option>
-        <option value="bandung.html">Bandung</option>
-        <option value="medan.html">Medan</option>
-        <option value="bali.html">Bali</option>
-        <option value="jakarta.html">Semarang</option>
-        <option value="jakarta.html">Makassar</option>
-        <option value="jakarta.html">Yogyakarta</option>
-      </select>
-    </section>
-
-    <section>
-      <div class="section-title">🏙️ Kota-Kota Utama Indonesia</div>
-      <div class="cities-grid">
+  <!-- Main Current Weather detail card (Original screenshot design) -->
+  <div id="main-weather">
+    <div class="main-card" id="m-card">
+      <div class="main-icon" id="m-icon">⛅</div>
+      <div class="main-info" style="flex: 1;">
+        <div class="main-city" id="m-city">—</div>
+        <div class="main-country" id="m-country">Indonesia 🇮🇩</div>
+        <div class="main-temp" id="m-temp">—°C</div>
+        <div class="main-desc" id="m-desc">—</div>
         
-        <div class="city-card" id="card-jakarta">
-          <div class="card-icon">⏳</div>
-          <div class="card-name"><a href="jakarta.html">Jakarta</a></div>
-          <div class="card-temp">Memuat...</div>
-          <div class="card-desc">Tunggu sebentar...</div>
+        <!-- Native share options for WhatsApp and Twitter -->
+        <div class="share-container">
+           <a href="#" id="share-wa-btn" target="_blank" class="share-btn share-wa">WhatsApp</a>
+           <a href="#" id="share-tw-btn" target="_blank" class="share-btn share-tw">Twitter (X)</a>
         </div>
 
-        <div class="city-card" id="card-surabaya">
-          <div class="card-icon">⏳</div>
-          <div class="card-name"><a href="surabaya.html">Surabaya</a></div>
-          <div class="card-temp">Memuat...</div>
-          <div class="card-desc">Tunggu sebentar...</div>
+        <div class="main-stats">
+          <div class="stat"><div class="stat-val" id="m-humidity">—</div><div class="stat-label">💧 Kelembaban</div></div>
+          <div class="stat"><div class="stat-val" id="m-wind">—</div><div class="stat-label">💨 Angin</div></div>
+          <div class="stat"><div class="stat-val" id="m-feels">—</div><div class="stat-label">🌡️ Terasa</div></div>
+          <div class="stat"><div class="stat-val" id="m-vis">—</div><div class="stat-label">👁️ Jarak Pandang</div></div>
         </div>
-
-        <div class="city-card" id="card-bali">
-          <div class="card-icon">⏳</div>
-          <div class="card-name"><a href="bali.html">Bali</a></div>
-          <div class="card-temp">Memuat...</div>
-          <div class="card-desc">Tunggu sebentar...</div>
-        </div>
-
-        <div class="city-card" id="card-medan">
-          <div class="card-icon">⏳</div>
-          <div class="card-name"><a href="medan.html">Medan</a></div>
-          <div class="card-temp">Memuat...</div>
-          <div class="card-desc">Tunggu sebentar...</div>
-        </div>
-
-        <div class="city-card" id="card-bandung">
-          <div class="card-icon">⏳</div>
-          <div class="card-name"><a href="bandung.html">Bandung</a></div>
-          <div class="card-temp">Memuat...</div>
-          <div class="card-desc">Tunggu sebentar...</div>
-        </div>
-
-        <div class="city-card" id="card-makassar">
-          <div class="card-icon">⏳</div>
-          <div class="card-name"><a href="jakarta.html">Makassar</a></div>
-          <div class="card-temp">Memuat...</div>
-          <div class="card-desc">Tunggu sebentar...</div>
-        </div>
-
-        <div class="city-card" id="card-yogyakarta">
-          <div class="card-icon">⏳</div>
-          <div class="card-name"><a href="jakarta.html">Yogyakarta</a></div>
-          <div class="card-temp">Memuat...</div>
-          <div class="card-desc">Tunggu sebentar...</div>
-        </div>
-
-        <div class="city-card" id="card-semarang">
-          <div class="card-icon">⏳</div>
-          <div class="card-name"><a href="jakarta.html">Semarang</a></div>
-          <div class="card-temp">Memuat...</div>
-          <div class="card-desc">Tunggu sebentar...</div>
-        </div>
-
       </div>
-    </section>
-  </main>
+    </div>
+  </div>
+
+  <!-- 7-DAY DYNAMIC FORECAST PANEL (Screenshot 2 design layout) -->
+  <div id="forecast-section">
+     <div class="section-title" id="forecast-title">📅 Prakiraan 5-7 Hari ke Depan</div>
+     <div class="forecast-grid" id="forecast-grid"></div>
+  </div>
+
+  <!-- Major Cities Grid Cards in Indonesia -->
+  <div class="section-title">🏙️ Kota-Kota Utama Indonesia</div>
+  <div class="city-grid" id="city-grid"></div>
+
+  <div class="section-title">💡 Tips Cuaca</div>
+  <div class="tips-grid">
+    <div class="tip-card"><h3>☔ Musim Hujan (Okt–Mar)</h3><p>Selalu bawa payung atau jas hujan. Curah hujan tinggi terutama sore dan malam hari.</p></div>
+    <div class="tip-card"><h3>☀️ Musim Kemarau (Apr–Sep)</h3><p>Gunakan tabir surya dan minum air putih yang cukup. Suhu bisa mencapai 35°C.</p></div>
+    <div class="tip-card"><h3>🌊 Cuaca Pesisir</h3><p>Pantau prakiraan angin dan gelombang sebelum berlayar atau berenang di pantai.</p></div>
+    <div class="tip-card"><h3>🏔️ Cuaca Pegunungan</h3><p>Daerah Dieng, Bromo, Puncak bisa sangat dingin di malam hari. Bawa jaket tebal.</p></div>
+  </div>
 
   <footer>
-    <p>© 2026 <strong>CuacaIndo</strong> — Data Cuaca Real-Time dari OpenWeatherMap</p>
+    <div style="margin-bottom: 25px; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px;">
+        <span style="color: var(--teal); font-weight: 700; display: block; margin-bottom: 12px; letter-spacing: 1px;">LIHAT CUACA KOTA LAIN:</span>
+        <div style="display: flex; justify-content: center; gap: 18px; flex-wrap: wrap;">
+            <a href="jakarta.html" style="color: var(--muted); text-decoration: none;">Jakarta</a> · 
+            <a href="surabaya.html" style="color: var(--muted); text-decoration: none;">Surabaya</a> · 
+            <a href="bali.html" style="color: var(--muted); text-decoration: none;">Bali</a> · 
+            <a href="medan.html" style="color: var(--muted); text-decoration: none;">Medan</a> · 
+            <a href="bandung.html" style="color: var(--muted); text-decoration: none;">Bandung</a> · 
+            <a href="makassar.html" style="color: var(--muted); text-decoration: none;">Makassar</a>
+        </div>
+    </div>
+    <p>© 2026 <strong>CuacaIndo</strong> — Data dari OpenWeatherMap</p>
   </footer>
 </div>
 
 <script>
   const API_KEY = '82be2db14f9b737940ac1a0e8f3c93a7';
-  
-  // State manajemen untuk global unit (°C / °F)
-  let currentUnit = 'C'; 
-  let weatherDataStorage = {}; // API responses store karne ke liye taaki toggle instant ho
 
-  const majorCities = [
-    { searchName: 'Jakarta', cardId: 'card-jakarta', displayName: 'Jakarta', link: 'jakarta.html' },
-    { searchName: 'Surabaya', cardId: 'card-surabaya', displayName: 'Surabaya', link: 'surabaya.html' },
-    { searchName: 'Denpasar', cardId: 'card-bali', displayName: 'Bali', link: 'bali.html' }, 
-    { searchName: 'Medan', cardId: 'card-medan', displayName: 'Medan', link: 'medan.html' },
-    { searchName: 'Bandung', cardId: 'card-bandung', displayName: 'Bandung', link: 'bandung.html' },
-    { searchName: 'Makassar', cardId: 'card-makassar', displayName: 'Makassar', link: 'jakarta.html' },
-    { searchName: 'Yogyakarta', cardId: 'card-yogyakarta', displayName: 'Yogyakarta', link: 'jakarta.html' },
-    { searchName: 'Semarang', cardId: 'card-semarang', displayName: 'Semarang', link: 'jakarta.html' }
+  // These are the 8 main Indonesian major cities as per your exact initial layout structure
+  const CITIES = [
+    {name:'Jakarta',    id:1642911, file:'jakarta.html'},
+    {name:'Surabaya',  id:1625822, file:'surabaya.html'},
+    {name:'Bali',      id:1650218, file:'bali.html'},
+    {name:'Medan',     id:1214520, file:'medan.html'},
+    {name:'Bandung',    id:1649082, file:'bandung.html'},
+    {name:'Makassar',  id:1622786, file:'makassar.html'},
+    {name:'Yogyakarta', id:1624304, file:'yogyakarta.html'},
+    {name:'Semarang',  id:1627896, file:'semarang.html'},
   ];
 
-  function getWeatherEmoji(weatherId, iconStr) {
-    if (!weatherId) return '⛅';
-    const c = String(weatherId);
-    if (c.startsWith('2')) return '⛈️'; 
-    if (c.startsWith('3')) return '🌦️'; 
-    if (c.startsWith('5')) return '🌧️'; 
-    if (c.startsWith('6')) return '❄️'; 
-    if (c.startsWith('7')) return '🌫️'; 
-    if (c === '800') return (iconStr && iconStr.includes('n')) ? '🌙' : '☀️'; 
-    if (c.startsWith('8')) return (iconStr && iconStr.includes('n')) ? '☁️' : '⛅'; 
-    return '🌤️';
+  let currentUnit = 'C';
+  let cachedWeatherData = {}; // Storage index for weather calculations
+  let cachedForecastData = {}; // Storage for forecast conversions
+
+  function getIcon(code, iconStr){
+    if(!code) return '⛅';
+    const c=String(code);
+    if(c.startsWith('2'))return'⛈️';
+    if(c.startsWith('3'))return'🌦️';
+    if(c.startsWith('5'))return'🌧️';
+    if(c.startsWith('6'))return'❄️';
+    if(c.startsWith('7'))return'🌫️';
+    if(c==='800'){
+        return (iconStr && iconStr.includes('n')) ? '🌙' : '☀️';
+    }
+    if(c.startsWith('8')){
+        return (iconStr && iconStr.includes('n')) ? '☁️' : '⛅';
+    }
+    return'🌤️';
   }
 
-  function translateDesc(desc) {
-    const map = {
-      'clear sky': 'cerah', 'few clouds': 'sedikit berawan',
-      'scattered clouds': 'awan tersebar', 'broken clouds': 'berawan banyak',
-      'overcast clouds': 'mendung', 'haze': 'halimun', 'mist': 'kabut asap',
-      'light rain': 'hujan ringan', 'moderate rain': 'hujan sedang',
-      'heavy intensity rain': 'hujan lebat', 'fog': 'kabut tebal'
-    };
-    return map[desc.toLowerCase()] || desc;
+  function descID(desc){
+    const map={'clear sky':'Cerah','few clouds':'Sedikit Berawan','scattered clouds':'Berawan',
+      'broken clouds':'Berawan Banyak','shower rain':'Hujan Ringan','rain':'Hujan',
+      'thunderstorm':'Badai Petir','snow':'Salju','mist':'Berkabut','overcast clouds':'Mendung',
+      'light rain':'Hujan Ringan','moderate rain':'Hujan Sedang',
+      'heavy intensity rain':'Hujan Lebat','haze':'Kabut','fog':'Kabut Tebal','smoke':'Kabut Asap'};
+    return map[desc.toLowerCase()]||desc;
   }
 
-  // Celsius ko Fahrenheit me transform karne ka math formula
-  function convertTemp(celsiusValue) {
+  // Fahrenheit conversion calculations
+  function formatTemp(celsiusValue) {
     if (currentUnit === 'F') {
       return Math.round((celsiusValue * 9/5) + 32) + '°F';
     }
     return Math.round(celsiusValue) + '°C';
   }
 
-  // Cards UI renderer function
-  function updateGridDisplay() {
-    majorCities.forEach(city => {
-      const data = weatherDataStorage[city.cardId];
-      if (!data) return;
-
-      const cityCard = document.getElementById(city.cardId);
-      if (cityCard) {
-        const tempDisplay = convertTemp(data.main.temp);
-        const descText = translateDesc(data.weather[0].description);
-        const currentEmoji = getWeatherEmoji(data.weather[0].id, data.weather[0].icon);
-        
-        // Dynamic sharing lines setup
-        const pageUrl = window.location.href;
-        const shareText = `Info cuaca terbaru untuk ${city.displayName}: Suhu ${tempDisplay}, Kondisi ${descText}. Pantau terus di CuacaIndo:`;
-        const waLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ' + pageUrl)}`;
-        const twLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(pageUrl)}`;
-
-        cityCard.innerHTML = `
-          <div class="card-icon">${currentEmoji}</div>
-          <div class="card-name"><a href="${city.link}">${city.displayName}</a></div>
-          <div class="card-temp">${tempDisplay}</div>
-          <div class="card-desc">${descText}</div>
-          <div class="card-share">
-            <a href="${waLink}" target="_blank" class="mini-share sh-wa">🟢 WA</a>
-            <a href="${twLink}" target="_blank" class="mini-share sh-tw">🐦 X</a>
-          </div>
-        `;
-      }
-    });
-  }
-
-  // Toggle button click handler
   function toggleUnits() {
     const btn = document.getElementById('unit-toggle');
     if (currentUnit === 'C') {
@@ -256,40 +321,291 @@
       currentUnit = 'C';
       btn.textContent = 'Ubah ke °F';
     }
-    updateGridDisplay();
+    // Instant recalculation for all displayed values
+    updateActiveDisplays();
   }
 
-  // API parser data engine
-  async function loadAllCitiesWeather() {
-    for (const city of majorCities) {
-      try {
-        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city.searchName)},ID&appid=${API_KEY}&units=metric&lang=id`);
-        if (response.ok) {
-          const data = await response.json();
-          weatherDataStorage[city.cardId] = data; // Storage me catch kiya
-        }
-      } catch (error) {
-        console.error(`Gagal mengambil data untuk ${city.displayName}:`, error);
+  // Live WIB Clock
+  function updateClock(){
+    const now = new Date();
+    const optionsTime = { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    const optionsDate = { timeZone: 'Asia/Jakarta', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    
+    document.getElementById('clock').textContent = new Intl.DateTimeFormat('id-ID', optionsTime).format(now);
+    document.getElementById('date-display').textContent = new Intl.DateTimeFormat('id-ID', optionsDate).format(now);
+  }
+  setInterval(updateClock, 1000); 
+  updateClock();
+
+  // Dynamic animations engine based on selected weather data
+  function applyWeatherEffects(weatherId, iconCode) {
+      const effectsContainer = document.getElementById('weather-effects');
+      effectsContainer.innerHTML = ''; 
+      document.body.classList.remove('night-mode', 'sunny-mode');
+
+      const isNight = iconCode.includes('n');
+
+      if (isNight) {
+          document.body.classList.add('night-mode');
+          for (let i = 0; i < 65; i++) {
+              let star = document.createElement('div');
+              star.className = 'star';
+              star.style.left = Math.random() * 100 + 'vw';
+              star.style.top = Math.random() * 100 + 'vh';
+              let size = Math.random() * 2 + 1;
+              star.style.width = size + 'px';
+              star.style.height = size + 'px';
+              star.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+              star.style.animationDelay = Math.random() + 's';
+              effectsContainer.appendChild(star);
+          }
+      } else if (weatherId === 800) {
+          document.body.classList.add('sunny-mode');
+          let sun = document.createElement('div');
+          sun.className = 'sun-flare';
+          effectsContainer.appendChild(sun);
       }
-    }
-    updateGridDisplay(); // UI rendering call
+
+      if (weatherId >= 200 && weatherId < 600) {
+          for (let i = 0; i < 55; i++) {
+              let drop = document.createElement('div');
+              drop.className = 'drop';
+              drop.style.left = Math.random() * 100 + 'vw';
+              drop.style.animationDuration = (Math.random() * 0.4 + 0.4) + 's';
+              drop.style.animationDelay = Math.random() * 1.5 + 's';
+              effectsContainer.appendChild(drop);
+          }
+      }
   }
 
-  // Custom city search input input action
-  function searchCustomCity() {
-    const query = document.getElementById('custom-search').value.trim();
-    if (query) {
-      // Redirect paths direct to search parameters if integrated or custom alerts
-      alert(`Mencari data untuk kota "${query}". Fitur pencarian lanjutan sedang sinkronisasi dengan database wilayah.`);
+  // Sharing links updates dynamically
+  function updateShareLinks(cityName, rawTemp, descText) {
+      const pageUrl = window.location.href;
+      const displayTemp = formatTemp(rawTemp);
+      const shareText = `Halo! Cek prakiraan cuaca terkini di ${cityName}: Suhu ${displayTemp} (${descText}). Pantau selengkapnya di CuacaIndo:`;
+      
+      document.getElementById('share-wa-btn').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ' + pageUrl)}`;
+      document.getElementById('share-tw-btn').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(pageUrl)}`;
+  }
+
+  // 7-day dynamic forecast fetcher
+  async function fetchForecast(cityName) {
+    try {
+      const r = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(cityName)},ID&appid=${API_KEY}&units=metric&lang=id`);
+      if(!r.ok) return;
+      const data = await r.json();
+      cachedForecastData[cityName] = data;
+      renderForecastDisplay(cityName);
+    } catch(e) { console.log(e); }
+  }
+
+  function renderForecastDisplay(cityName) {
+    const data = cachedForecastData[cityName];
+    if(!data) return;
+
+    const grid = document.getElementById('forecast-grid');
+    grid.innerHTML = '';
+    document.getElementById('forecast-title').innerHTML = `📅 Prakiraan Cuaca Berkelanjutan — ${data.city.name}`;
+    document.getElementById('forecast-section').style.display = 'block';
+
+    const seenDates = new Set();
+    let count = 0;
+
+    data.list.forEach(item => {
+       const dateObj = new Date(item.dt * 1000);
+       const dayName = dateObj.toLocaleDateString('id-ID', { weekday: 'long' });
+       const dateString = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+       
+       if(!seenDates.has(dayName) && count < 6) {
+          seenDates.add(dayName);
+          count++;
+
+          const fCard = document.createElement('div');
+          fCard.className = 'forecast-card';
+          fCard.innerHTML = `
+             <div class="fore-day">${dayName}</div>
+             <div class="fore-date">${dateString}</div>
+             <div class="fore-icon">${getIcon(item.weather[0].id, item.weather[0].icon)}</div>
+             <div class="fore-temp">${formatTemp(item.main.temp)}</div>
+             <div class="fore-desc">${descID(item.weather[0].description)}</div>
+          `;
+          grid.appendChild(fCard);
+       }
+    });
+  }
+
+  // Search trigger by input typing or dropdown selection
+  async function fetchByName(name){
+    try{
+      const r=await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(name)},ID&appid=${API_KEY}&units=metric&lang=id`);
+      if(!r.ok){ showError(); return; }
+      const data = await r.json();
+      cachedWeatherData[data.id] = data;
+      showMain(data);
+      fetchForecast(data.name);
+    }catch{ showError(); }
+  }
+
+  async function fetchSingleId(id) {
+    try {
+      const r = await fetch(`https://api.openweathermap.org/data/2.5/weather?id=${id}&appid=${API_KEY}&units=metric&lang=id`);
+      return r.ok ? r.json() : null;
+    } catch { return null; }
+  }
+
+  function showMain(d){
+    if(!d || !d.main) { showError(); return; }
+    document.getElementById('error-msg').style.display='none';
+    document.getElementById('main-weather').style.display='block';
+    
+    applyWeatherEffects(d.weather[0].id, d.weather[0].icon);
+
+    document.getElementById('m-icon').textContent=getIcon(d.weather[0].id, d.weather[0].icon);
+    document.getElementById('m-city').textContent=d.name;
+    document.getElementById('m-temp').textContent=formatTemp(d.main.temp);
+    document.getElementById('m-desc').textContent=descID(d.weather[0].description);
+    document.getElementById('m-humidity').textContent=d.main.humidity+'%';
+    document.getElementById('m-wind').textContent=Math.round(d.wind.speed * 3.6)+' km/j';
+    document.getElementById('m-feels').textContent=formatTemp(d.main.feels_like);
+    document.getElementById('m-vis').textContent=d.visibility?(d.visibility/1000).toFixed(1)+' km':'—';
+    
+    updateShareLinks(d.name, d.main.temp, descID(d.weather[0].description));
+
+    const card=document.getElementById('m-card');
+    card.style.animation='none'; void card.offsetWidth; card.style.animation='fadeUp 0.5s ease forwards';
+    document.getElementById('main-weather').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function showError(){
+    document.getElementById('error-msg').style.display='block';
+    document.getElementById('main-weather').style.display='none';
+    document.getElementById('forecast-section').style.display='none';
+  }
+
+  function searchCity(){
+    const val=document.getElementById('search-input').value.trim();
+    if(val) fetchByName(val);
+  }
+  
+  function dropdownSearch(){
+    let val = document.getElementById('city-dropdown').value;
+    // Extract "Bali" from Denpasar value options mapping
+    if(val === "Bali") val = "Denpasar";
+    if(val) {
+        document.getElementById('search-input').value = val;
+        fetchByName(val);
     }
   }
 
-  // Standard life-cycle initialization
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadAllCitiesWeather);
-  } else {
-    loadAllCitiesWeather();
+  document.getElementById('search-input').addEventListener('keydown',e=>{if(e.key==='Enter')searchCity();});
+
+  // Hot swap scale update engine for Celsius/Fahrenheit conversion dynamically
+  function updateActiveDisplays() {
+    // 1. Update main panel card
+    const mainCityName = document.getElementById('m-city').textContent;
+    if (mainCityName && mainCityName !== '—') {
+      const activeObj = Object.values(cachedWeatherData).find(item => item.name === mainCityName);
+      if (activeObj) {
+        document.getElementById('m-temp').textContent = formatTemp(activeObj.main.temp);
+        document.getElementById('m-feels').textContent = formatTemp(activeObj.main.feels_like);
+        updateShareLinks(activeObj.name, activeObj.main.temp, descID(activeObj.weather[0].description));
+      }
+      renderForecastDisplay(mainCityName);
+    }
+
+    // 2. Update all grid cities cards values
+    CITIES.forEach(city => {
+      const data = cachedWeatherData[city.id];
+      if (data) {
+        const tempEl = document.getElementById(`t-${city.id}`);
+        if(tempEl) tempEl.textContent = formatTemp(data.main.temp);
+        
+        // Also update sub-card inline share links mapping
+        const tempText = formatTemp(data.main.temp);
+        const descText = descID(data.weather[0].description);
+        const pageUrl = window.location.href;
+        const shareText = `Info cuaca terbaru untuk ${city.name}: Suhu ${tempText}, Kondisi ${descText}. Pantau terus di CuacaIndo:`;
+        
+        const waEl = document.getElementById(`wa-${city.id}`);
+        const twEl = document.getElementById(`tw-${city.id}`);
+        if(waEl) waEl.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ' + pageUrl)}`;
+        if(twEl) twEl.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(pageUrl)}`;
+      }
+    });
   }
-</script>
+
+  // SEO Optimized Cities Grid Cards Builder
+  async function buildGrid(){
+    const grid=document.getElementById('city-grid');
+    grid.innerHTML = ''; 
+    
+    CITIES.forEach((city, i) => {
+      const card = document.createElement('a');
+      card.className = 'city-card';
+      card.id = `ccard-${city.id}`;
+      card.href = city.file;
+      card.style.animationDelay = (i * 0.04) + 's';
+      card.innerHTML = `
+        <div class="city-icon" id="icon-${city.id}">⏳</div>
+        <div class="city-name">${city.name}</div>
+        <div class="city-temp" id="t-${city.id}">Memuat...</div>
+        <div class="city-desc" id="d-${city.id}">Sabar ya...</div>
+        <div class="card-share">
+          <a href="#" id="wa-${city.id}" target="_blank" class="mini-share sh-wa" onclick="event.stopPropagation();">🟢 WA</a>
+          <a href="#" id="tw-${city.id}" target="_blank" class="mini-share sh-tw" onclick="event.stopPropagation();">🐦 X</a>
+        </div>
+      `;
+      
+      // Dynamic on-page transitions when clicking on city cards
+      card.addEventListener('click', (e) => {
+          e.preventDefault(); 
+          document.getElementById('search-input').value = city.name; 
+          document.getElementById('city-dropdown').value = '';
+          fetchSingleId(city.id).then(d => {
+             if(d) {
+                showMain(d);
+                fetchForecast(d.name);
+             }
+          });
+      });
+      grid.appendChild(card);
+    });
+
+    // Group API execution call preventing loading locks on single iterations
+    const ids = CITIES.map(c => c.id).join(',');
+    try {
+      const res = await fetch(`https://api.openweathermap.org/data/2.5/group?id=${ids}&appid=${API_KEY}&units=metric&lang=id`);
+      if(!res.ok) return;
+      const data = await res.json();
+      
+      data.list.forEach(cityData => {
+        const id = cityData.id;
+        cachedWeatherData[id] = cityData; // Cache loaded results index
+        
+        const tempEl = document.getElementById(`t-${id}`);
+        const descEl = document.getElementById(`d-${id}`);
+        const iconEl = document.getElementById(`icon-${id}`);
+        
+        if(tempEl) tempEl.textContent = formatTemp(cityData.main.temp);
+        if(descEl) descEl.textContent = descID(cityData.weather[0].description);
+        if(iconEl) iconEl.textContent = getIcon(cityData.weather[0].id, cityData.weather[0].icon);
+
+        // Update inline sub-card mini share URLs
+        const tempText = formatTemp(cityData.main.temp);
+        const descText = descID(cityData.weather[0].description);
+        const cityObj = CITIES.find(c => c.id === id);
+        const pageUrl = window.location.href;
+        const shareText = `Info cuaca terbaru untuk ${cityObj.name}: Suhu ${tempText}, Kondisi ${descText}. Pantau terus di CuacaIndo:`;
+        
+        const waEl = document.getElementById(`wa-${id}`);
+        const twEl = document.getElementById(`tw-${id}`);
+        if(waEl) waEl.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ' + pageUrl)}`;
+        if(twEl) twEl.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(pageUrl)}`;
+      });
+    } catch (e) { console.log(e); }
+  }
+  
+  buildGrid();
+</script> 
 </body>
 </html>
