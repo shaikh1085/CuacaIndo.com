@@ -651,6 +651,36 @@
       console.log("Error fetching grid data:", e); 
     }
   }
+  // URL se city check karne ka sabse asaan aur fast SEO script
+function checkURLRoute() {
+  const urlParams = new URLSearchParams(window.location.search);
+  let cityParam = urlParams.get('city');
+
+  // AGAR LINK ME "?city=Bandung" HO YA DIRECT "?Bandung" HO, DONO CHLENGE
+  if (!cityParam) {
+    const pathKeys = Array.from(urlParams.keys());
+    if (pathKeys.length > 0 && pathKeys[0].toLowerCase() === 'bandung') {
+      cityParam = 'Bandung';
+    }
+  }
+
+  if (cityParam && cityParam.toLowerCase() === 'bandung') {
+    // Direct Bandung ka live data fetch hoga bina user ke click kiye
+    document.getElementById('search-input').value = 'Bandung';
+    document.getElementById('city-dropdown').value = 'Bandung';
+    fetchByName('Bandung');
+  } else if (cityParam) {
+    // Baaki kisi shahar ke liye agar link ho
+    document.getElementById('search-input').value = cityParam;
+    fetchByName(cityParam);
+  } else {
+    // Agar normal home link ho toh default grid load hoga
+    buildGrid();
+  }
+}
+
+// Purane buildGrid() call ki jagah ab is route engine ko run karein
+checkURLRoute();
   
   buildGrid();
 </script> 
