@@ -122,7 +122,7 @@
     .main-stats { display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:16px; margin-top:24px; width: 100%; }
     .stat { background:rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius:16px; padding:14px; text-align:center; transition: background 0.3s; }
     .stat-val { font-size:1.2rem; font-weight:600; color:var(--gold); }
-    .stat-label { font-size:0.75rem; color:var(--muted); margin-top:4px; }
+    .stat-label { font-size:0.75rem; color:var(--muted); margin-top:4px; transition: color 0.3s; }
     
     /* 7-DAY FORECAST PANEL */
     #forecast-section { display: none; margin-bottom: 40px; animation: fadeUp 0.6s ease forwards; }
@@ -603,15 +603,28 @@
       grid.appendChild(card);
     });
 
-    // Group API execution call preventing loading locks on single iterations
-    const ids = CITIES.map(c => c.id).join(',');
+    // Promise.all sequentially parallel fetch structure instead of the broken group API endpoint
     try {
-      const res = await fetch(`https://api.openweathermap.org/data/2.5/group?id=${ids}&appid=${API_KEY}&units=metric&lang=id`);
-      if(!res.ok) return;
-      const data = await res.json();
-      
-      data.list.forEach(cityData => {
-        const id = cityData.id;
+      const fetchPromises = CITIES.map(async (city) => {
+        try {
+          const queryName = city.name === 'Bali' ? 'Denpasar' : city.name;
+          const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(queryName)},ID&appid=${API_KEY}&units=metric&lang=id`);
+          if (!res.ok) return null;
+          const data = await res.json();
+          // Keep uniformity for Bali
+          if(city.name === 'Bali') data.name = 'Bali';
+          return { cityId: city.id, data };
+        } catch {
+          return null;
+        }
+      });
+
+      const results = await Promise.all(fetchPromises);
+
+      results.forEach(result => {
+        if (!result) return;
+        const id = result.cityId;
+        const cityData = result.data;
         cachedWeatherData[id] = cityData; // Cache loaded results index
         
         const tempEl = document.getElementById(`t-${id}`);
@@ -634,7 +647,9 @@
         if(waEl) waEl.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ' + pageUrl)}`;
         if(twEl) twEl.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(pageUrl)}`;
       });
-    } catch (e) { console.log(e); }
+    } catch (e) { 
+      console.log("Error fetching grid data:", e); 
+    }
   }
   
   buildGrid();
