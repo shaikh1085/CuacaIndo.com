@@ -25,9 +25,11 @@
     .logo span { color:var(--teal); }
     .logo small { display:block; font-family:'DM Sans',sans-serif; font-size:0.6rem; letter-spacing:4px; color:var(--muted); text-transform:uppercase; margin-top:2px; }
     
+    /* Units Toggle Style */
     .unit-toggle-btn { background: var(--glass); border: 1px solid var(--card-border); padding: 10px 20px; border-radius: 30px; color: var(--white); font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.9rem; }
     .unit-toggle-btn:hover { background: var(--teal); color: #060b13; box-shadow: 0 4px 15px rgba(0,201,177,0.3); }
 
+    /* Main Search Panel Section */
     .search-section { text-align: center; padding: 50px 0 30px; }
     .search-section h1 { font-family:'Playfair Display',serif; font-size: 2.5rem; margin-bottom: 8px; }
     .search-section p { color: var(--muted); margin-bottom: 25px; }
@@ -36,9 +38,11 @@
     .search-btn { background: var(--teal); border: none; padding: 0 25px; border-radius: 30px; font-weight: bold; cursor: pointer; color: #060b13; }
     .city-select { width: 100%; max-width: 500px; padding: 12px; border-radius: 10px; background: #fff; color: #333; font-size: 1rem; border: none; margin: 0 auto; display: block; }
 
+    /* Major Cities Section Title */
     .section-title { font-family:'Playfair Display',serif; font-size:1.6rem; margin:50px 0 25px; display:flex; align-items:center; gap:12px; }
     .section-title::after { content:''; flex:1; height:1px; background:linear-gradient(to right,rgba(255,255,255,0.1),transparent); }
     
+    /* Cities Grid and Cards Layout */
     .cities-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; }
     .city-card { background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); border: 1px solid var(--card-border); border-radius: 24px; padding: 25px; backdrop-filter: blur(15px); transition: transform 0.3s, border-color 0.3s; position: relative; }
     .city-card:hover { transform: translateY(-5px); border-color: var(--teal); }
@@ -50,6 +54,7 @@
     .card-temp { font-size: 2.3rem; font-weight: 300; color: var(--teal2); margin: 10px 0; }
     .card-desc { font-size: 0.88rem; color: var(--muted); text-transform: capitalize; margin-bottom: 15px; }
     
+    /* Inline Mini Share Buttons */
     .card-share { display: flex; gap: 8px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 12px; }
     .mini-share { font-size: 0.75rem; text-decoration: none; color: #fff; padding: 5px 10px; border-radius: 12px; font-weight: bold; display: flex; align-items: center; gap: 4px; transition: opacity 0.2s; }
     .mini-share:hover { opacity: 0.8; }
@@ -77,16 +82,16 @@
         <input type="text" id="custom-search" class="search-input" placeholder="Ketik nama kota... (Contoh: Palembang)">
         <button class="search-btn" onclick="searchCustomCity()">🔍 Cari</button>
       </div>
-      <select class="city-select" onchange="if(this.value) location = this.value;">
+      <select class="city-select" onchange="location = this.value;">
         <option value="">-- Atau Pilih Kota Besar --</option>
         <option value="jakarta.html">Jakarta</option>
         <option value="surabaya.html">Surabaya</option>
         <option value="bandung.html">Bandung</option>
         <option value="medan.html">Medan</option>
         <option value="bali.html">Bali</option>
-        <option value="semarang.html">Semarang</option>
-        <option value="makassar.html">Makassar</option>
-        <option value="yogyakarta.html">Yogyakarta</option>
+        <option value="jakarta.html">Semarang</option>
+        <option value="jakarta.html">Makassar</option>
+        <option value="jakarta.html">Yogyakarta</option>
       </select>
     </section>
 
@@ -131,21 +136,21 @@
 
         <div class="city-card" id="card-makassar">
           <div class="card-icon">⏳</div>
-          <div class="card-name"><a href="makassar.html">Makassar</a></div>
+          <div class="card-name"><a href="jakarta.html">Makassar</a></div>
           <div class="card-temp">Memuat...</div>
           <div class="card-desc">Tunggu sebentar...</div>
         </div>
 
         <div class="city-card" id="card-yogyakarta">
           <div class="card-icon">⏳</div>
-          <div class="card-name"><a href="yogyakarta.html">Yogyakarta</a></div>
+          <div class="card-name"><a href="jakarta.html">Yogyakarta</a></div>
           <div class="card-temp">Memuat...</div>
           <div class="card-desc">Tunggu sebentar...</div>
         </div>
 
         <div class="city-card" id="card-semarang">
           <div class="card-icon">⏳</div>
-          <div class="card-name"><a href="semarang.html">Semarang</a></div>
+          <div class="card-name"><a href="jakarta.html">Semarang</a></div>
           <div class="card-temp">Memuat...</div>
           <div class="card-desc">Tunggu sebentar...</div>
         </div>
@@ -162,19 +167,19 @@
 <script>
   const API_KEY = '82be2db14f9b737940ac1a0e8f3c93a7';
   
+  // State manajemen untuk global unit (°C / °F)
   let currentUnit = 'C'; 
-  let weatherDataStorage = {}; 
+  let weatherDataStorage = {}; // API responses store karne ke liye taaki toggle instant ho
 
-  // FIXED LINKS HERE FOR ALL 8 CITIES
   const majorCities = [
     { searchName: 'Jakarta', cardId: 'card-jakarta', displayName: 'Jakarta', link: 'jakarta.html' },
     { searchName: 'Surabaya', cardId: 'card-surabaya', displayName: 'Surabaya', link: 'surabaya.html' },
     { searchName: 'Denpasar', cardId: 'card-bali', displayName: 'Bali', link: 'bali.html' }, 
     { searchName: 'Medan', cardId: 'card-medan', displayName: 'Medan', link: 'medan.html' },
     { searchName: 'Bandung', cardId: 'card-bandung', displayName: 'Bandung', link: 'bandung.html' },
-    { searchName: 'Makassar', cardId: 'card-makassar', displayName: 'Makassar', link: 'makassar.html' },
-    { searchName: 'Yogyakarta', cardId: 'card-yogyakarta', displayName: 'Yogyakarta', link: 'yogyakarta.html' },
-    { searchName: 'Semarang', cardId: 'card-semarang', displayName: 'Semarang', link: 'semarang.html' }
+    { searchName: 'Makassar', cardId: 'card-makassar', displayName: 'Makassar', link: 'jakarta.html' },
+    { searchName: 'Yogyakarta', cardId: 'card-yogyakarta', displayName: 'Yogyakarta', link: 'jakarta.html' },
+    { searchName: 'Semarang', cardId: 'card-semarang', displayName: 'Semarang', link: 'jakarta.html' }
   ];
 
   function getWeatherEmoji(weatherId, iconStr) {
@@ -201,6 +206,7 @@
     return map[desc.toLowerCase()] || desc;
   }
 
+  // Celsius ko Fahrenheit me transform karne ka math formula
   function convertTemp(celsiusValue) {
     if (currentUnit === 'F') {
       return Math.round((celsiusValue * 9/5) + 32) + '°F';
@@ -208,6 +214,7 @@
     return Math.round(celsiusValue) + '°C';
   }
 
+  // Cards UI renderer function
   function updateGridDisplay() {
     majorCities.forEach(city => {
       const data = weatherDataStorage[city.cardId];
@@ -219,6 +226,7 @@
         const descText = translateDesc(data.weather[0].description);
         const currentEmoji = getWeatherEmoji(data.weather[0].id, data.weather[0].icon);
         
+        // Dynamic sharing lines setup
         const pageUrl = window.location.href;
         const shareText = `Info cuaca terbaru untuk ${city.displayName}: Suhu ${tempDisplay}, Kondisi ${descText}. Pantau terus di CuacaIndo:`;
         const waLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ' + pageUrl)}`;
@@ -238,6 +246,7 @@
     });
   }
 
+  // Toggle button click handler
   function toggleUnits() {
     const btn = document.getElementById('unit-toggle');
     if (currentUnit === 'C') {
@@ -250,28 +259,32 @@
     updateGridDisplay();
   }
 
+  // API parser data engine
   async function loadAllCitiesWeather() {
     for (const city of majorCities) {
       try {
         const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city.searchName)},ID&appid=${API_KEY}&units=metric&lang=id`);
         if (response.ok) {
           const data = await response.json();
-          weatherDataStorage[city.cardId] = data; 
+          weatherDataStorage[city.cardId] = data; // Storage me catch kiya
         }
       } catch (error) {
         console.error(`Gagal mengambil data untuk ${city.displayName}:`, error);
       }
     }
-    updateGridDisplay(); 
+    updateGridDisplay(); // UI rendering call
   }
 
+  // Custom city search input input action
   function searchCustomCity() {
     const query = document.getElementById('custom-search').value.trim();
     if (query) {
-      alert(`Mencari data untuk kota "${query}". Fitur pencarian sedang disinkronisasikan.`);
+      // Redirect paths direct to search parameters if integrated or custom alerts
+      alert(`Mencari data untuk kota "${query}". Fitur pencarian lanjutan sedang sinkronisasi dengan database wilayah.`);
     }
   }
 
+  // Standard life-cycle initialization
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', loadAllCitiesWeather);
   } else {
