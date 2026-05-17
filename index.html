@@ -47,13 +47,42 @@
     .logo span { color:var(--teal); }
     .logo small { display:block; font-family:'DM Sans',sans-serif; font-size:0.6rem; letter-spacing:4px; color:var(--muted); text-transform:uppercase; margin-top:2px; }
     
-    .header-right { display: flex; align-items: center; gap: 20px; text-align: right; }
-    .header-time { font-size:0.78rem; color:var(--muted); }
+    /* Header Right layout with Clock aligned Right */
+    .header-right { display: flex; align-items: center; gap: 24px; text-align: right; }
+    .header-time { font-size:0.78rem; color:var(--muted); order: 2; } /* Places time to the absolute right side */
     .header-time #clock { font-size:1.4rem; font-weight:500; color:var(--white); display:block; margin-bottom:2px; }
     
-    /* Premium Unit Toggle */
-    .unit-toggle-btn { background: var(--glass); border: 1px solid var(--card-border); padding: 8px 16px; border-radius: 30px; color: var(--white); font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.85rem; }
-    .unit-toggle-btn:hover { background: var(--teal); color: #060b13; box-shadow: 0 4px 15px rgba(0,201,177,0.3); }
+    /* Premium Inline Celsius & Fahrenheit Switch Options */
+    .unit-toggle-container { 
+      display: flex; 
+      align-items: center; 
+      background: var(--glass); 
+      border: 1px solid var(--card-border); 
+      padding: 6px 14px; 
+      border-radius: 30px; 
+      gap: 8px; 
+      order: 1; 
+      backdrop-filter: blur(10px);
+    }
+    .unit-btn { 
+      background: none; 
+      border: none; 
+      color: var(--muted); 
+      font-weight: 700; 
+      cursor: pointer; 
+      font-size: 0.95rem; 
+      transition: all 0.3s; 
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .unit-btn.active { 
+      color: var(--teal2); 
+      text-shadow: 0 0 12px rgba(0, 229, 204, 0.5); 
+    }
+    .unit-divider { 
+      color: rgba(255, 255, 255, 0.15); 
+      font-size: 0.85rem; 
+    }
 
     .search-section { padding:40px 0 20px; text-align:center; }
     .search-section h1 { font-family:'Playfair Display',serif; font-size:clamp(2rem,6vw,3.5rem); font-weight:700; line-height:1.1; margin-bottom:12px; }
@@ -140,7 +169,7 @@
       .main-temp{font-size:3.8rem} 
       .search-box{flex-direction:column} 
       header{flex-direction: column; text-align: center; gap: 15px;}
-      .header-right{flex-direction: column; gap: 10px; text-align: center;}
+      .header-right{flex-direction: column; gap: 15px; text-align: center;}
     }
   </style>
 </head>
@@ -156,12 +185,19 @@
   <header>
     <div class="logo">Cuaca<span>Indo</span><small>Informasi Cuaca Indonesia</small></div>
     <div class="header-right">
+      <!-- Live Clock (WIB) Aligned to Right Side -->
       <div class="header-time">
           <span style="font-size:0.7rem; color:var(--teal); display:block; margin-bottom:2px;">Waktu Indonesia (WIB)</span>
           <span id="clock"></span>
           <span id="date-display"></span>
       </div>
-      <button class="unit-toggle-btn" id="unit-toggle" onclick="toggleUnits()">Ubah ke °F</button>
+      
+      <!-- Side-by-Side Premium Unit Toggle [°C | °F] option next to clock -->
+      <div class="unit-toggle-container">
+        <button class="unit-btn active" id="unit-c" onclick="setUnit('C')">°C</button>
+        <span class="unit-divider">|</span>
+        <button class="unit-btn" id="unit-f" onclick="setUnit('F')">°F</button>
+      </div>
     </div>
   </header>
   
@@ -175,7 +211,6 @@
     </div>
     
     <div class="dropdown-container">
-        <!-- ALL ORIGINAL CITIES LOADED IN THE DROPDOWN SELECTBOX -->
         <select id="city-dropdown" class="city-dropdown" onchange="dropdownSearch()">
             <option value="">-- Atau Pilih Kota Besar --</option>
             <option value="Jakarta">Jakarta</option>
@@ -312,16 +347,16 @@
     return Math.round(celsiusValue) + '°C';
   }
 
-  function toggleUnits() {
-    const btn = document.getElementById('unit-toggle');
-    if (currentUnit === 'C') {
-      currentUnit = 'F';
-      btn.textContent = 'Ubah ke °C';
-    } else {
-      currentUnit = 'C';
-      btn.textContent = 'Ubah ke °F';
-    }
-    // Instant recalculation for all displayed values
+  // Sets active selector tab dynamically and updates conversions
+  function setUnit(unit) {
+    if (currentUnit === unit) return;
+    currentUnit = unit;
+    
+    // Toggle class active status
+    document.getElementById('unit-c').classList.toggle('active', unit === 'C');
+    document.getElementById('unit-f').classList.toggle('active', unit === 'F');
+    
+    // Refresh all elements
     updateActiveDisplays();
   }
 
@@ -391,7 +426,8 @@
   // 7-day dynamic forecast fetcher
   async function fetchForecast(cityName) {
     try {
-      const r = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(cityName)},ID&appid=${API_KEY}&units=metric&lang=id`);
+      const queryName = cityName === 'Bali' ? 'Denpasar' : cityName;
+      const r = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(queryName)},ID&appid=${API_KEY}&units=metric&lang=id`);
       if(!r.ok) return;
       const data = await r.json();
       cachedForecastData[cityName] = data;
@@ -405,7 +441,9 @@
 
     const grid = document.getElementById('forecast-grid');
     grid.innerHTML = '';
-    document.getElementById('forecast-title').innerHTML = `📅 Prakiraan Cuaca Berkelanjutan — ${data.city.name}`;
+    // Display "Bali" even if the API data uses Denpasar
+    const displayName = data.city.name === 'Denpasar' ? 'Bali' : data.city.name;
+    document.getElementById('forecast-title').innerHTML = `📅 Prakiraan Cuaca Berkelanjutan — ${displayName}`;
     document.getElementById('forecast-section').style.display = 'block';
 
     const seenDates = new Set();
@@ -434,23 +472,24 @@
     });
   }
 
-  // Search trigger by input typing or dropdown selection
+  // 100% Robust City search trigger
   async function fetchByName(name){
     try{
-      const r=await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(name)},ID&appid=${API_KEY}&units=metric&lang=id`);
+      // Denpasar maps to Bali beautifully
+      const queryName = name === 'Bali' ? 'Denpasar' : name;
+      const r=await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(queryName)},ID&appid=${API_KEY}&units=metric&lang=id`);
       if(!r.ok){ showError(); return; }
       const data = await r.json();
+      
+      // Keep name as "Bali" for uniform branding
+      if (name === 'Bali') {
+          data.name = 'Bali';
+      }
+      
       cachedWeatherData[data.id] = data;
       showMain(data);
-      fetchForecast(data.name);
+      fetchForecast(name);
     }catch{ showError(); }
-  }
-
-  async function fetchSingleId(id) {
-    try {
-      const r = await fetch(`https://api.openweathermap.org/data/2.5/weather?id=${id}&appid=${API_KEY}&units=metric&lang=id`);
-      return r.ok ? r.json() : null;
-    } catch { return null; }
   }
 
   function showMain(d){
@@ -489,8 +528,6 @@
   
   function dropdownSearch(){
     let val = document.getElementById('city-dropdown').value;
-    // Extract "Bali" from Denpasar value options mapping
-    if(val === "Bali") val = "Denpasar";
     if(val) {
         document.getElementById('search-input').value = val;
         fetchByName(val);
@@ -556,17 +593,12 @@
         </div>
       `;
       
-      // Dynamic on-page transitions when clicking on city cards
+      // Click event calling robust direct fetchByName instead of buggy singleId ID method
       card.addEventListener('click', (e) => {
           e.preventDefault(); 
           document.getElementById('search-input').value = city.name; 
-          document.getElementById('city-dropdown').value = '';
-          fetchSingleId(city.id).then(d => {
-             if(d) {
-                showMain(d);
-                fetchForecast(d.name);
-             }
-          });
+          document.getElementById('city-dropdown').value = city.name === 'Bali' ? 'Bali' : city.name;
+          fetchByName(city.name);
       });
       grid.appendChild(card);
     });
