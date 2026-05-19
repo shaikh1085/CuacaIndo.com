@@ -693,13 +693,14 @@ function checkURLRoute() {
 
 // Purane buildGrid() call ki jagah ab is route engine ko run karein
 checkURLRoute();
-// Purane buildGrid() call ki jagah ab is route engine ko run karein
-checkURLRoute();
 
-// Auto redirect to Vercel
-window.location.replace("https://cuacaindo-terkini.vercel.app/");
 
-  buildGrid();
+// REDIRECT ONLY IF USER IS ON GITHUB
+if (window.location.hostname.includes("github.io")) {
+    window.location.replace("https://cuacaindo-terkini.vercel.app/");
+} else {
+    buildGrid();
+}
 </script> 
 </body>
 </html>
