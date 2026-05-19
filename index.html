@@ -695,42 +695,48 @@
     }
   }
   // URL se city check karne ka sabse asaan aur fast SEO script
+// ==========================================
+// ROBUST DYNAMIC AUTO-ROUTING ENGINE (SEO NO.1)
+// ==========================================
 function checkURLRoute() {
   const urlParams = new URLSearchParams(window.location.search);
   let cityParam = urlParams.get('city');
 
-  // AGAR LINK ME "?city=Bandung" HO YA DIRECT "?Bandung" HO, DONO CHLENGE
+  // AGAR LINK ME DIRECT "?Surabaya" HO (BINA "city=" KE), TO USE BHI AUTO-DETECT KAREIN
   if (!cityParam) {
     const pathKeys = Array.from(urlParams.keys());
-    if (pathKeys.length > 0 && pathKeys[0].toLowerCase() === 'bandung') {
-      cityParam = 'Bandung';
+    if (pathKeys.length > 0) {
+      cityParam = pathKeys[0]; 
     }
   }
 
-  if (cityParam && cityParam.toLowerCase() === 'bandung') {
-    // Direct Bandung ka live data fetch hoga bina user ke click kiye
-    document.getElementById('search-input').value = 'Bandung';
-    document.getElementById('city-dropdown').value = 'Bandung';
-    fetchByName('Bandung');
-  } else if (cityParam) {
-    // Baaki kisi shahar ke liye agar link ho
-    document.getElementById('search-input').value = cityParam;
-    fetchByName(cityParam);
+  // AGAR URL ME KOI BHI CITY MILTI HAI TO AUTO-SEARCH KAREIN
+  if (cityParam && cityParam.trim() !== '') {
+    // City name ko properly clean aur format karein (e.g. "surabaya" -> "Surabaya")
+    const cleanCity = cityParam.trim();
+    const formattedCity = cleanCity.charAt(0).toUpperCase() + cleanCity.slice(1).toLowerCase();
+    
+    // UI inputs ko update karein taake user ko pata chale kya search hua hai
+    const searchInput = document.getElementById('search-input');
+    const cityDropdown = document.getElementById('city-dropdown');
+    
+    if (searchInput) searchInput.value = formattedCity;
+    if (cityDropdown) cityDropdown.value = formattedCity;
+    
+    // Live weather aur 12h forecast automatic load karein
+    fetchByName(formattedCity);
   } else {
-    // Agar normal home link ho toh default grid load hoga
+    // Agar normal homepage khule bina kisi query ke, to standard grid load ho
     buildGrid();
   }
 }
 
-// Purane buildGrid() call ki jagah ab is route engine ko run karein
-checkURLRoute();
-
-
-// REDIRECT ONLY IF USER IS ON GITHUB
+// GITHUB SECURITY REDIRECT & LIVE APP INITIALIZATION
 if (window.location.hostname.includes("github.io")) {
     window.location.replace("https://cuacaindo-terkini.vercel.app/");
 } else {
-    buildGrid();
+    // Vercel par aate hi dynamic routing engine chalega
+    checkURLRoute();
 }
 </script> 
 </body>
