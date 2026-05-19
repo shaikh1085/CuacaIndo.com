@@ -1,39 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-   <url>
-      <loc>https://cuacaindo-terkini.netlify.app/</loc>
-      <lastmod>2026-05-16</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>1.0</priority>
-   </url>
-   <url>
-      <loc>https://cuacaindo-terkini.netlify.app/jakarta</loc>
-      <lastmod>2026-05-16</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.8</priority>
-   </url>
-   <url>
-      <loc>https://cuacaindo-terkini.netlify.app/surabaya</loc>
-      <lastmod>2026-05-16</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.8</priority>
-   </url>
-   <url>
-      <loc>https://cuacaindo-terkini.netlify.app/bali</loc>
-      <lastmod>2026-05-16</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.8</priority>
-   </url>
-   <url>
-      <loc>https://cuacaindo-terkini.netlify.app/bandung</loc>
-      <lastmod>2026-05-16</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.8</priority>
-   </url>
-   <url>
-      <loc>https://cuacaindo-terkini.netlify.app/medan</loc>
-      <lastmod>2026-05-16</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.8</priority>
-   </url>
+  
+  <url>
+    <loc>https://cuacaindo-terkini.vercel.app/</loc>
+    <lastmod>2026-05-19</lastmod>
+    <changefreq>always</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://cuacaindo-terkini.vercel.app/&amp;Jakarta</loc>
+    <lastmod>2026-05-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://cuacaindo-terkini.vercel.app/&amp;Surabaya</loc>
+    <lastmod>2026-05-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://cuacaindo-terkini.vercel.app/&amp;Bali</loc>
+    <lastmod>2026-05-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://cuacaindo-terkini.vercel.app/&amp;Bandung</loc>
+    <lastmod>2026-05-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://cuacaindo-terkini.vercel.app/&amp;Medan</loc>
+    <lastmod>2026-05-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://cuacaindo-terkini.vercel.app/&amp;Makassar</loc>
+    <lastmod>2026-05-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://cuacaindo-terkini.vercel.app/&amp;Yogyakarta</loc>
+    <lastmod>2026-05-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://cuacaindo-terkini.vercel.app/&amp;Semarang</loc>
+    <lastmod>2026-05-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
 </urlset>
