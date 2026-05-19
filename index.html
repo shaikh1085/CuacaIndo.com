@@ -2,8 +2,7 @@
 <html lang="id">
 <head>
   
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HLMFKZWXVG"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HLMFKZWXVG"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -135,6 +134,15 @@
     .stat { background:rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius:16px; padding:14px; text-align:center; transition: background 0.3s; }
     .stat-val { font-size:1.2rem; font-weight:600; color:var(--gold); }
     .stat-label { font-size:0.75rem; color:var(--muted); margin-top:4px; transition: color 0.3s; }
+
+    /* 12-HOUR HOURLY FORECAST CONTAINER */
+    #hourly-section { display: none; margin: 35px 0 15px; animation: fadeUp 0.6s ease forwards; }
+    .hourly-grid { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
+    .hourly-card { background: var(--glass); border: 1px solid var(--card-border); border-radius: 16px; padding: 14px 10px; text-align: center; min-width: 95px; flex-shrink: 0; backdrop-filter: blur(10px); transition: transform 0.3s, background 0.3s; }
+    .hourly-card:hover { transform: translateY(-2px); background: var(--glass-hover); border-color: var(--teal); }
+    .hour-time { font-size: 0.82rem; opacity: 0.8; margin-bottom: 6px; }
+    .hour-icon { font-size: 2rem; margin: 4px 0; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+    .hour-temp { font-size: 1.15rem; font-weight: 700; color: #2dd4bf; margin-top: 4px; }
     
     /* 7-DAY FORECAST PANEL */
     #forecast-section { display: none; margin-bottom: 40px; animation: fadeUp 0.6s ease forwards; }
@@ -197,14 +205,12 @@
   <header>
     <div class="logo">Cuaca<span>Indo</span><small>Informasi Cuaca Indonesia</small></div>
     <div class="header-right">
-      <!-- Live Clock (WIB) Aligned to Right Side -->
       <div class="header-time">
           <span style="font-size:0.7rem; color:var(--teal); display:block; margin-bottom:2px;">Waktu Indonesia (WIB)</span>
           <span id="clock"></span>
           <span id="date-display"></span>
       </div>
       
-      <!-- Side-by-Side Premium Unit Toggle [°C | °F] option next to clock -->
       <div class="unit-toggle-container">
         <button class="unit-btn active" id="unit-c" onclick="setUnit('C')">°C</button>
         <span class="unit-divider">|</span>
@@ -246,7 +252,6 @@
     <div class="error-msg" id="error-msg">Kota tidak ditemukan. Coba nama kota lain.</div>
   </div>
 
-  <!-- Main Current Weather detail card (Original screenshot design) -->
   <div id="main-weather">
     <div class="main-card" id="m-card">
       <div class="main-icon" id="m-icon">⛅</div>
@@ -256,7 +261,6 @@
         <div class="main-temp" id="m-temp">—°C</div>
         <div class="main-desc" id="m-desc">—</div>
         
-        <!-- Native share options for WhatsApp and Twitter -->
         <div class="share-container">
            <a href="#" id="share-wa-btn" target="_blank" class="share-btn share-wa">WhatsApp</a>
            <a href="#" id="share-tw-btn" target="_blank" class="share-btn share-tw">Twitter (X)</a>
@@ -272,13 +276,16 @@
     </div>
   </div>
 
-  <!-- 7-DAY DYNAMIC FORECAST PANEL (Screenshot 2 design layout) -->
+  <div id="hourly-section">
+     <div class="section-title" style="margin: 25px 0 15px;">⏰ Prakiraan Cuaca 12 Jam Kedepan</div>
+     <div class="hourly-grid" id="hourly-grid"></div>
+  </div>
+
   <div id="forecast-section">
      <div class="section-title" id="forecast-title">📅 Prakiraan 5-7 Hari ke Depan</div>
      <div class="forecast-grid" id="forecast-grid"></div>
   </div>
 
-  <!-- Major Cities Grid Cards in Indonesia -->
   <div class="section-title">🏙️ Kota-Kota Utama Indonesia</div>
   <div class="city-grid" id="city-grid"></div>
 
@@ -451,6 +458,29 @@
     const data = cachedForecastData[cityName];
     if(!data) return;
 
+    // --- 12 HOURS HOURLY FORECAST LOOP ENGINE ---
+    const hourlyGrid = document.getElementById('hourly-grid');
+    if (hourlyGrid && data.list) {
+        hourlyGrid.innerHTML = '';
+        // 5-Day/3-Hour API: 4 items total equivalent to 12 Hours (4 * 3 = 12h)
+        const next12Hours = data.list.slice(0, 4);
+        next12Hours.forEach(hour => {
+            const dateObj = new Date(hour.dt * 1000);
+            const timeString = dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            
+            const hCard = document.createElement('div');
+            hCard.className = 'hourly-card';
+            hCard.innerHTML = `
+                <div class="hour-time">${timeString}</div>
+                <div class="hour-icon">${getIcon(hour.weather[0].id, hour.weather[0].icon)}</div>
+                <div class="hour-temp">${formatTemp(hour.main.temp)}</div>
+            `;
+            hourlyGrid.appendChild(hCard);
+        });
+        document.getElementById('hourly-section').style.display = 'block';
+    }
+
+    // --- 7 DAYS CONTINUOUS FORECAST GRID ---
     const grid = document.getElementById('forecast-grid');
     grid.innerHTML = '';
     // Display "Bali" even if the API data uses Denpasar
@@ -530,6 +560,7 @@
   function showError(){
     document.getElementById('error-msg').style.display='block';
     document.getElementById('main-weather').style.display='none';
+    document.getElementById('hourly-section').style.display='none';
     document.getElementById('forecast-section').style.display='none';
   }
 
